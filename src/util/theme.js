@@ -14,9 +14,26 @@ const theme = {
         }, 
         background: {
             default: '#fff',
-        }
+            paper: '#fff',
+            outerSpace: 'rgb(15,29,56)',
+        },        
+    },
+    shape:{
+        // innerBorderRadius: '10px 10px 10px 10px',
+        innerBorderRadius: '5px 5px 0px 0px',
+        containerBorderRadius: '5px'
     },
     spacing: 8,
+    customSpacings: {
+        innerPosition: {
+            // top: "10px",//'calc(2% + 10px)',
+            top: "0px"
+        },
+        // innerHeight: 'calc(100% - 20px)',
+        // innerWidth: 'calc(100% - 20px)',
+        innerHeight: '100%',
+        innerWidth: '100%',
+    }
 
 }
 

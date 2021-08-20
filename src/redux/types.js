@@ -1,0 +1,1 @@
+export const SET_WS_OPEN = 'SET_WS_OPEN';

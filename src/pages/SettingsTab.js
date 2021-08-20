@@ -20,14 +20,14 @@ import InfoIcon from '@material-ui/icons/Info';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-      width: '85%',
-      maxWidth: 360,
-      margin: '0 auto',
-      height: 'calc(100vh - 180px)',
-      minHeight: "480px",
-      backgroundColor: theme.palette.background.paper,
-      top: 'calc(2vh + 10px)',
-      borderRadius: theme.shape.borderRadius,    
+        width: theme.customSpacings.innerWidth,        
+        margin: 'auto',
+        height: theme.customSpacings.innerHeight,                
+        backgroundColor: theme.palette.background.paper,
+        top: theme.customSpacings.innerPosition.top,
+        borderRadius: theme.shape.innerBorderRadius,
+        boxShadow:'1px',
+        padding: "0px",
     },
     title: {
         fontFamily: theme.typography.fontFamily,
