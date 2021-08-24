@@ -9,6 +9,7 @@ import store from './redux/store'
 
 import themeFile from './util/theme'
 
+import ws from './util/connection'
 
 // ipmort pages
 import Home from './pages/Home'
@@ -27,6 +28,8 @@ window.addEventListener('resize', () => {
   document.documentElement.style.setProperty('--vh', `${vh}px`);
 });
 
+// initiate connection with the readers
+ws.connect();
 
 const theme = createTheme(themeFile)
 

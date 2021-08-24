@@ -1,33 +1,30 @@
-import {createStore, applyMiddleware, compose} from 'redux'
+import {createStore, applyMiddleware, compose,combineReducers} from 'redux'
 import thunk from 'redux-thunk'
 import dataReducer from './reducers/dataReducer'
-import MyWebSocket from '../util/connection'
-import {wsMessageHandler,wsOnOpen,wsOnError,wsOnClose} from './actions/dataActions'
+import uiReducer from './reducers/uiReducer'
 
 
-const websocket = new MyWebSocket(
-    wsOnOpen,    
-    wsOnClose, 
-    wsOnError,
-    wsMessageHandler,    
-)
 
 
 // can potentially read cached initial state from localStorage
-const initialState = {ws:websocket}
-
+const initialState = {}
 
 const middleware = [thunk]
 
+const reducers = combineReducers({
+    data: dataReducer,
+    ui:uiReducer,
+})
+
+
 let reduxTool = window.__REDUX_DEVTOOLS_EXTENSION__?.()
 
-const store = createStore(dataReducer, 
+const store = createStore(reducers, 
     initialState,
     reduxTool 
     ? compose(applyMiddleware(...middleware), reduxTool)
     : applyMiddleware(...middleware)
-    )
-
+)
 
 
 export default store

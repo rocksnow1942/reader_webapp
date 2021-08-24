@@ -1,3 +1,5 @@
+import {wsMessageHandler,wsOnOpen,wsOnError,wsOnClose} from '../redux/actions/dataActions'
+
 
 class MyWebSocket {
     /**
@@ -24,8 +26,8 @@ class MyWebSocket {
         this.ws.onclose = (evt) => {this.closeHandler && this.closeHandler(evt)}
         this.ws.onmessage = (msg) => {            
             const parsedMsg = this.parseMsg(msg)
-            if (parsedMsg) {
-                if (this.asyncHandler.length) {
+            if (parsedMsg) {                
+                if (this.asyncHandler.length) {                    
                     let idx = this.asyncHandler.map(i=>i.action).indexOf(parsedMsg.action)
                     if (idx === -1) {
                         this.msgHandler(parsedMsg.data,parsedMsg.action)    
@@ -68,10 +70,10 @@ class MyWebSocket {
         this.connect()
     }
 
-    asyncSend(msg,timeout=5000) {
+    get(msg,timeout=5000) {
         return new Promise((resolve, reject) => {
-            const action = msg.action
-            this.ws.send(msg);
+            const action = msg.action            
+            this.send(msg);
             this.asyncHandler.push({action,resolve})
             setTimeout(() => {
                 // remove handler from asyncHandler after timeout
@@ -86,4 +88,15 @@ class MyWebSocket {
 
 }
 
-export default MyWebSocket
+
+
+
+const websocket = new MyWebSocket(
+    wsOnOpen,    
+    wsOnClose, 
+    wsOnError,
+    wsMessageHandler,    
+)
+
+
+export default websocket

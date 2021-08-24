@@ -5,6 +5,7 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import clsx from "clsx";
+import ws from '../util/connection'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,7 +47,8 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "bold",
     fontSize: "1.5em",
     borderRadius: "0.5em",
-    width: "30%",
+    width: "38%",
+    minWidth:"8em",
     color: "green",
     "&:hover": {
       backgroundColor: "transparent",
@@ -88,17 +90,17 @@ function Timer() {
 }
 
 export const HomeTab = (props) => {
-  const { ws, wsOpen } = props;
+  const { wsOpen , systemID } = props;
   const classes = useStyles();
-  const [connected, setConnected] = useState(false);
-
+  
+  
   return (
     <Paper className={classes.root} elevation={0}>
       <Typography variant="subtitle2" className={classes.preReaderId}>
         Reader ID
       </Typography>
       <Typography variant="h3" className={wsOpen? classes.readerId : clsx(classes.readerId,classes.disconnected)}>
-        AMS-PGH
+        {systemID}
       </Typography>
       <Typography variant="subtitle2" className={classes.preStatus}>
         Reader Status
@@ -133,7 +135,7 @@ export const HomeTab = (props) => {
 
       <Button
         onClick={() => {
-          props.ws.send({ action: "main.getVersion" });
+          ws.send({ action: "main.getVersion" });
         }}
       >
         Test Button
@@ -142,9 +144,9 @@ export const HomeTab = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  ws: state.ws,
-  wsOpen: state.wsOpen,
+const mapStateToProps = (state) => ({  
+  wsOpen: state.data.wsOpen,
+  systemID: state.data.systemID,
 });
 
 const mapDispatchToProps = {};

@@ -18,6 +18,8 @@ import HomeTab from "./HomeTab";
 import RecentTab from "./RecentTab";
 
 
+
+
 const useStyles = makeStyles((theme) => ({
   container: {
     backgroundColor: theme.palette.background.outerSpace,
@@ -43,19 +45,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const Home = (props) => {
-  const {ws} = props;
+  const {} = props;
   const classes = useStyles();
   const [tab, setTab] = useState(1);
 
   const [open, setOpen] = useState(false);
 
 
-  useEffect(() => {
-    ws.connect()
-    return () => {
-      ws.close()      
-    }
-  },[])
+  
 
   return (
     <div>
@@ -114,7 +111,7 @@ export const Home = (props) => {
 };
 
 const mapStateToProps = (state) => ({
-  ws: state.ws
+  
 });
 
 const mapDispatchToProps = {};
