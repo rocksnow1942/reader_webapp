@@ -3,7 +3,7 @@ import './App.css';
 import {BrowserRouter, Switch, Route} from 'react-router-dom'
 import { createTheme, ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles'
 
-
+import React, {useEffect} from 'react';
 import { Provider } from 'react-redux'
 import store from './redux/store'
 
@@ -28,13 +28,19 @@ window.addEventListener('resize', () => {
   document.documentElement.style.setProperty('--vh', `${vh}px`);
 });
 
-// initiate connection with the readers
-ws.connect();
+
 
 const theme = createTheme(themeFile)
 
 
 function App() {
+
+  useEffect(() => {    
+    ws.connect()
+    // close ws when app is closed
+    return () => {ws.close()}
+  },[])
+  
   
   return (
     <MuiThemeProvider theme={theme}>

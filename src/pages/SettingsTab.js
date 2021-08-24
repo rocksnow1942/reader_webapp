@@ -49,6 +49,10 @@ const useStyles = makeStyles((theme) => ({
 export const SettingsTab = (props) => {
     const classes = useStyles();
     const currentFirmwareVer = '1.2.4'
+
+    if (!props.open) {
+        return null
+        }
     return (
         // < Grid container spacing={2}>
         //     <Grid item xs={12} sm={6}>

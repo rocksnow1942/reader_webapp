@@ -19,11 +19,20 @@ class MyWebSocket {
         this.asyncHandler = []
         
     }
+    isConnected() {
+        return this.ws && this.ws.readyState === WebSocket.OPEN
+    }
     connect() {
+        
+        if (this.isConnected()) {            
+            return}
         this.ws  = new WebSocket(this.webSocketAddr);        
         this.ws.onopen = (e)=>{this.openHandler && this.openHandler(e)}
         this.ws.onerror = (err) => {this.errorHandler && this.errorHandler(err)}
-        this.ws.onclose = (evt) => {this.closeHandler && this.closeHandler(evt)}
+        this.ws.onclose = (evt) => {            
+            this.ws = null;
+            this.closeHandler && this.closeHandler(evt)
+        }
         this.ws.onmessage = (msg) => {            
             const parsedMsg = this.parseMsg(msg)
             if (parsedMsg) {                
@@ -56,13 +65,13 @@ class MyWebSocket {
     }
 
     send(msg) {
-        if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+        if (this.isConnected()) {
             this.ws.send(JSON.stringify(msg))
         }
     }
 
-    close () {
-        this.ws.close()
+    close () {        
+        if (this.ws) {this.ws.close()}
     }
 
     reconnect () {

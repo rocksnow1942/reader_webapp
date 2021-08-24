@@ -40,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
   status: {
     color: "green",
     fontWeight: "bold",
+    textTransform: "uppercase"
   },
 
   connectBtn: {
@@ -57,30 +58,37 @@ const useStyles = makeStyles((theme) => ({
   disconnectBtn: {
     boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.75)",
     "&:hover": {
-      color: "#fff",
-      backgroundColor: "#EEB422",
+      color: "#EEEDE9",
+      backgroundColor: "#EAA410",
+      
     },
   },
   disconnected: {
     color: "#fff",
     backgroundColor: "#FFA500",
   },
+  error : {
+    color:'red'
+  },
+  running: {
+    color:'#FFA500'
+  }
 }));
 
-function Timer() {
+function Timer({time}) {
   const classes = useStyles();
-  const [remaining, setRemaining] = useState(10);
-  const minute = remaining / 60;
-  const second = remaining % 60;
+  // const [remaining, setRemaining] = useState(10);
+  const minute = time / 60;
+  const second = time % 60;
   const format = (second) => `${parseInt(second / 10)}${parseInt(second % 10)}`;
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setRemaining((r) => r && r - 1);
-    }, 1000);
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
+  // useEffect(() => {
+  //   const timer = setInterval(() => {
+  //     setRemaining((r) => r && r - 1);
+  //   }, 1000);
+  //   return () => {
+  //     clearInterval(timer);
+  //   };
+  // }, []);
 
   return (
     <Typography variant="h4" className={classes.status}>
@@ -90,10 +98,12 @@ function Timer() {
 }
 
 export const HomeTab = (props) => {
-  const { wsOpen , systemID } = props;
+  const { wsOpen , systemID , readerStatus, measurement } = props;
   const classes = useStyles();
   
-  
+  if (!props.open) {
+    return null
+    }
   return (
     <Paper className={classes.root} elevation={0}>
       <Typography variant="subtitle2" className={classes.preReaderId}>
@@ -105,13 +115,17 @@ export const HomeTab = (props) => {
       <Typography variant="subtitle2" className={classes.preStatus}>
         Reader Status
       </Typography>
-      <Typography variant="h4" className={classes.status}>
-        Running
+      <Typography variant="h4" className={wsOpen?clsx(classes.status, classes[readerStatus.reader]): classes.running}>
+        {wsOpen ? readerStatus.reader || '??' : 'Disconnected'}
       </Typography>
-      <Typography variant="subtitle2" className={classes.preStatus}>
+      { readerStatus.reader === 'running' &&
+        <>
+        <Typography variant="subtitle2" className={classes.preStatus}>
         Remaining Time
       </Typography>
-      <Timer></Timer>
+      <Timer time = {measurement.remainingTime}/>
+      </>
+      }
 
       <Button
         className={
@@ -133,13 +147,6 @@ export const HomeTab = (props) => {
         {wsOpen ? "Connected" : "Connect"}
       </Button>
 
-      <Button
-        onClick={() => {
-          ws.send({ action: "main.getVersion" });
-        }}
-      >
-        Test Button
-      </Button>
     </Paper>
   );
 };
@@ -147,6 +154,8 @@ export const HomeTab = (props) => {
 const mapStateToProps = (state) => ({  
   wsOpen: state.data.wsOpen,
   systemID: state.data.systemID,
+  readerStatus: state.data.readerStatus,
+  measurement: state.data.readerStatus.measurement,
 });
 
 const mapDispatchToProps = {};

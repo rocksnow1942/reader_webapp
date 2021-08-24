@@ -57,9 +57,18 @@ export const Home = (props) => {
   return (
     <div>
       <div className={classes.container}>
-        {tab === 0 && <RecentTab />}
-        {tab === 1 && <HomeTab setOpen={setOpen} />}
-        {tab === 2 && <SettingsTab />}
+        {tab === 0 && <RecentTab open={tab===0}/>}
+        {tab === 1 && <HomeTab open={tab===1}/>}
+        {tab === 2 && <SettingsTab open={tab===2} />}
+
+
+
+        {/* <RecentTab open={tab===0}/>
+        <HomeTab open={tab===1}/>
+        <SettingsTab open={tab===2} /> */}
+
+         
+        
       </div>
 
       <BottomNavigation

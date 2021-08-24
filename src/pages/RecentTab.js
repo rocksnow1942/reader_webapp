@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { makeStyles } from '@material-ui/styles';
 import { connect } from 'react-redux'
 import List from '@material-ui/core/List';
@@ -7,7 +7,18 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography'
+import Button from '@material-ui/core/Button'
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import clsx from 'clsx'
+import dayjs from 'dayjs'
+
+import { fetchRecent } from '../redux/actions/dataActions'
+
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.extend(relativeTime)
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -26,79 +37,103 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: 'bold',        
     },
     resultDate: {
-        margin:'auto',        
+        margin:'0 0.8em',   
+        width: '40%',
+        minWidth: '150px',
     },
     result:{margin:'auto',color: 'orange'},
     Positive:{color:'red'},
-    Negative:{color:'green'},
-    resultPositive: {
-        margin: '0 auto',        
-        color: 'red',
-    },
-    resultNegative: {
-        margin: '0 auto',        
-        color: 'green',
-    },
-    resultOther : {
-        margin: '0 auto',
-        color: 'orange',
-    }
+    Negative:{color:'green'},  
 }))
 
 export const RecentTab = (props) => {
     const classes = useStyles()
+    const {recent,hasNext,hasPrev,fetchRecent} = props
+    const [anchorEl, setAnchorEl] = React.useState(null)
+    const [page, setPage] = React.useState(0)
+    const [perpage, setPerpage] = React.useState(10)
+    useEffect(()=>{
+        fetchRecent({page,perpage})
+        console.log("fetchRecent page = " + page)
+    }, [])
 
+    // const perpage = document.documentElement.style.getPropertyValue('--vh')
+    
+
+    const handleClose = () => {setAnchorEl(null)}
+    if (!props.open) {
+    return null
+    }
     return (
+        
        <List component="ul" className={classes.root} >
             <ListItem >                       
             <Typography className={classes.title}>Recent Tests</Typography>
             </ListItem>
-
-            
-
-            
         {
-            [['2021-08-19 08:21','Negative'],
-             ['2021-08-19 06:21','Negative'],
-             ['2021-08-18 22:21','Positive'],
-             ['2021-08-17 15:21','Invalid'],
-             ['2021-08-17 15:21','Negative'],
-             ['2021-08-17 15:21','Negative'],
-             ['2021-08-17 15:21','Negative'],
-       
-            
-        ].map(([t,r],index) =>  
+        recent.map(({_id, meta, deviceDataId, created, result},index) =>  
         <React.Fragment key={index}>
             <Divider  variant='middle'/>
             <ListItem key={index}>
-                <Typography className={classes.resultDate}>{t}</Typography> 
-                {/* <Typography className={
-                    r=='Positive' ? classes.resultPositive 
-                    : r=='Negative' ? classes.resultNegative : classes.resultOther 
-                    }>{r}</Typography> */}
+                <div className={classes.resultDate}>
+                <Typography>{dayjs(meta.created).format("MMM D, hh:mma")}</Typography> 
+                <Typography style={{fontSize:11}} color='textSecondary' variant='subtitle2'>{dayjs(meta.created).fromNow()}</Typography> 
+                </div>
+               
+                <Button onClick={()=>{
+                    console.log(`clicked on ${_id}`)
+                }}>Edit</Button>
 
-            <Typography classes = {{Negative: classes.negative,
-                Positive: classes.positive,
-                 root: classes.result}} className={clsx(classes.result,classes[r] )} >{r}</Typography>
+            <Typography  className={clsx(classes.result,classes[result] )} >{result}</Typography>
             </ListItem>
             
         </React.Fragment>
         )
         }
-    
+
+        <ListItem>
+       
+        <Typography variant='button'>Per Page :</Typography>
+        <Button 
+        endIcon = {<ArrowDropDownIcon />}
+        onClick={(e)=>{
+            setAnchorEl(e.currentTarget)            
+        }}>
+        {perpage}
+        </Button>
+        <Menu            
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+        >
+            <MenuItem onClick={()=>{setPerpage(5);handleClose()}}>5</MenuItem>
+            <MenuItem onClick={()=>{setPerpage(10);handleClose()}}>10</MenuItem>
+            <MenuItem onClick={()=>{setPerpage(20);handleClose()}}>20</MenuItem>
+        </Menu>
+
+       
+
+        </ListItem>
+        
 
         </List>
+
+       
+
     )
 }
 
 
 
 const mapStateToProps = (state) => ({
-    
+    recent: state.data.recentData.items,
+    hasNext: state.data.recentData.hasNext,
+    hasPrev: state.data.recentData.hasPrev,
 })
 
 const mapDispatchToProps = {
-    
+    fetchRecent
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(RecentTab)
