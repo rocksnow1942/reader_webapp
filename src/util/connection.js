@@ -36,8 +36,7 @@ class MyWebSocket {
         this.ws.onmessage = (msg) => {            
             const parsedMsg = this.parseMsg(msg)
             if (parsedMsg) {                
-                if (this.asyncHandler.length) {
-                    console.log(parsedMsg.action, this.asyncHandler)
+                if (this.asyncHandler.length) {                    
                     let idx = this.asyncHandler.map(i=>i.action).indexOf(parsedMsg.action)
                     if (idx === -1) {
                         this.msgHandler(parsedMsg.data,parsedMsg.action)    
@@ -92,13 +91,12 @@ class MyWebSocket {
             const timeStamp = new Date().toISOString()
             this.asyncHandler.push({action,resolve,timeStamp})
             this.send(msg);            
-            setTimeout(() => {
-                console.log(this.asyncHandler)
+            setTimeout(() => {                
                 // remove handler from asyncHandler after timeout
                 const idx = this.asyncHandler.map(i=>i.timeStamp).indexOf(timeStamp)
                 if (idx !== -1) {
                     this.asyncHandler.splice(idx,1)
-                    reject(new Error(`Send ${msg}; Timeout: ${timeout}ms`))
+                    reject(new Error(`Send ${JSON.stringify(msg)}; Timeout: ${timeout}ms`))
                 }                
             }, timeout)
         })

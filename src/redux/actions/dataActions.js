@@ -86,11 +86,15 @@ export const fetchRecent =
 
 
 
+/**
+ * get the currently connected ssid, reader remembered ssids, and available ssids
+ * @returns Wifi status object
+ */
 export const getWifiList = () => (dispatch) => {
   dispatch({type:SET_WIFI_STATUS,payload:{loading:true,error:false,availableNetworks:[]}})
   ws.get({ action: "peripheral.getWifiSSID" })
   .then(data=>{
-    dispatch({type:SET_WIFI_STATUS,payload:{ssid:data}})
+    dispatch({type:SET_WIFI_STATUS,payload:{ssid:data, mode:data?'client':'ap'}})
     return ws.get({ action: "peripheral.listSavedWifi" })
   })
   .then(data=>{
@@ -105,4 +109,27 @@ export const getWifiList = () => (dispatch) => {
     console.log(err)
     dispatch({type:SET_WIFI_STATUS,payload:{loading:false,error:true}})
   })
+}
+
+
+/**
+ * Set the reader wifi mode to ap or client
+ * @param {string} mode 'ap' or 'client'
+ * @returns 
+ */
+export const switchWifiMode = (mode) => (dispatch) => {
+  
+  dispatch({type:SET_WIFI_STATUS,payload:{mode}})
+
+  // ws.get({action:'peripheral.setWifiMode',mode})
+  // .then(data=>{    
+  //   dispatch({type:SET_WIFI_STATUS,payload:{ssid:'',mode, message:"Wifi "}})
+
+  //   ws.close()
+  // })
+  // .catch(err=>{
+  //   console.log(err)
+  //   dispatch({type:SET_WIFI_STATUS,payload:{loading:false,error:true}})
+  // })
+
 }

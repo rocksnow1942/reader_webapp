@@ -35,8 +35,9 @@ const initialState = {
         loading: false,
         error:false,
         ssid:"",
+        mode:"", // 'ap' or 'client'
         knownNetworks: [],
-        availableNetworks: [],
+        availableNetworks: [],        
     }
 
 }
