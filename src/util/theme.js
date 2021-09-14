@@ -15,7 +15,7 @@ const theme = {
         background: {
             default: '#fff',
             paper: '#fff',
-            outerSpace: 'rgb(15,29,56)',
+            outerSpace: '#eee', // rgb(15,29,56)
         },        
     },
     shape:{

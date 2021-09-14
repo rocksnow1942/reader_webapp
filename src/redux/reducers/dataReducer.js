@@ -4,7 +4,8 @@ import {
     SET_SYSTEM_ID,
     SET_FIRMWARE_VERSION,
     CLEAR_READER_STATUS,
-    SET_RECENT_DATA
+    SET_RECENT_DATA,
+    SET_WIFI_STATUS
 } from '../types'
 
 
@@ -30,6 +31,14 @@ const initialState = {
         hasPrev: false,
     },
 
+    wifiStatus: {
+        loading: false,
+        error:false,
+        ssid:"",
+        knownNetworks: [],
+        availableNetworks: [],
+    }
+
 }
 
 
@@ -47,7 +56,9 @@ export default function dataReducer(state = initialState, action) {
         case SET_FIRMWARE_VERSION:
             return {...state,firmwareVersion:payload}
         case SET_RECENT_DATA:
-            return {...state,recentData:payload}        
+            return {...state,recentData:payload}
+        case SET_WIFI_STATUS:
+            return {...state,wifiStatus:{...state.wifiStatus,...payload}}
         default:
             return state
     }

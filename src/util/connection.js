@@ -36,7 +36,8 @@ class MyWebSocket {
         this.ws.onmessage = (msg) => {            
             const parsedMsg = this.parseMsg(msg)
             if (parsedMsg) {                
-                if (this.asyncHandler.length) {                    
+                if (this.asyncHandler.length) {
+                    console.log(parsedMsg.action, this.asyncHandler)
                     let idx = this.asyncHandler.map(i=>i.action).indexOf(parsedMsg.action)
                     if (idx === -1) {
                         this.msgHandler(parsedMsg.data,parsedMsg.action)    
@@ -79,18 +80,26 @@ class MyWebSocket {
         this.connect()
     }
 
+    /**
+     * send a json message, resolve with the 'data' field of the response
+     * @param {objct} msg the json message to send
+     * @param {number} timeout timeout for this get method
+     * @returns Promise resolve to the data in response. or throw
+     */
     get(msg,timeout=5000) {
         return new Promise((resolve, reject) => {
-            const action = msg.action            
-            this.send(msg);
-            this.asyncHandler.push({action,resolve})
+            const action = msg.action
+            const timeStamp = new Date().toISOString()
+            this.asyncHandler.push({action,resolve,timeStamp})
+            this.send(msg);            
             setTimeout(() => {
+                console.log(this.asyncHandler)
                 // remove handler from asyncHandler after timeout
-                const idx = this.asyncHandler.map(i=>i.action).indexOf(action)
+                const idx = this.asyncHandler.map(i=>i.timeStamp).indexOf(timeStamp)
                 if (idx !== -1) {
                     this.asyncHandler.splice(idx,1)
+                    reject(new Error(`Send ${msg}; Timeout: ${timeout}ms`))
                 }                
-                reject(new Error(`Send ${msg}; Timeout: ${timeout}ms`))
             }, timeout)
         })
     }

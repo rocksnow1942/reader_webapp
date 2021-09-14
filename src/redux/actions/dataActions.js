@@ -5,6 +5,7 @@ import {
   SET_FIRMWARE_VERSION,
   CLEAR_READER_STATUS,
   SET_RECENT_DATA,
+  SET_WIFI_STATUS
 } from "../types";
 import store from "../store";
 import ws from "../../util/connection";
@@ -20,7 +21,7 @@ export const wsMessageHandler = (data, action) => {
       store.dispatch({ type: SET_READER_STATUS, payload: data });
       break;
     default:
-      console.log("message handler", action, data);
+      console.log("message handler unhandled message", action, data);
       break;
   }
 };
@@ -82,3 +83,26 @@ export const fetchRecent =
         console.error(`${err}`);
       });
   };
+
+
+
+export const getWifiList = () => (dispatch) => {
+  dispatch({type:SET_WIFI_STATUS,payload:{loading:true,error:false,availableNetworks:[]}})
+  ws.get({ action: "peripheral.getWifiSSID" })
+  .then(data=>{
+    dispatch({type:SET_WIFI_STATUS,payload:{ssid:data}})
+    return ws.get({ action: "peripheral.listSavedWifi" })
+  })
+  .then(data=>{
+    dispatch({type:SET_WIFI_STATUS,payload:{knownNetworks:data}})
+    return ws.get({ action: "peripheral.scanWifi" },10000)    
+  })
+  .then(data=>{
+    dispatch({type:SET_WIFI_STATUS,payload:{availableNetworks:data}})
+    dispatch({type:SET_WIFI_STATUS,payload:{loading:false,error:false}})
+  })
+  .catch((err)=>{
+    console.log(err)
+    dispatch({type:SET_WIFI_STATUS,payload:{loading:false,error:true}})
+  })
+}
