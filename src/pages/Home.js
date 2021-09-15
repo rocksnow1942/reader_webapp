@@ -12,6 +12,9 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 
+import ConfirmDialog from "../components/ConfirmDialog";
+
+
 // import tabs
 import SettingsTab from "./SettingsTab";
 import HomeTab from "./HomeTab";
@@ -114,7 +117,9 @@ export const Home = (props) => {
           This is a success message!
         </MuiAlert>
       </Snackbar>
-     
+          
+          {/* Global confirmdialog */}
+        <ConfirmDialog/>
     </div>
   );
 };

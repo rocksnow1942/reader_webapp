@@ -54,10 +54,7 @@ export default function SlideDialog({
         classes={{         
           container:classes.container,  
           paper:classes.paper,        
-        }}
-        
-        aria-labelledby="scroll-dialog-title"
-        aria-describedby="scroll-dialog-description"
+        }}                
       >
         {children}
         {/* <DialogTitle></DialogTitle>

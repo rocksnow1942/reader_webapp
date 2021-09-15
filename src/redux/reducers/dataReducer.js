@@ -5,7 +5,9 @@ import {
     SET_FIRMWARE_VERSION,
     CLEAR_READER_STATUS,
     SET_RECENT_DATA,
-    SET_WIFI_STATUS
+    SET_WIFI_STATUS,
+    SET_WIFI_NETWORKS,
+    FORGET_WIFI_NETWORK
 } from '../types'
 
 
@@ -60,6 +62,10 @@ export default function dataReducer(state = initialState, action) {
             return {...state,recentData:payload}
         case SET_WIFI_STATUS:
             return {...state,wifiStatus:{...state.wifiStatus,...payload}}
+        case FORGET_WIFI_NETWORK:
+            // remove a ssid from knwonNetworks
+            const knownNetworks = state.wifiStatus.knownNetworks.filter(n => n.ssid !== payload)
+            return {...state,wifiStatus:{...state.wifiStatus,knownNetworks}}
         default:
             return state
     }

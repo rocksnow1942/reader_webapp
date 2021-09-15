@@ -7,7 +7,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
-
+import TextField from "@material-ui/core/TextField";
 // icons
 import WifiIcon from "@material-ui/icons/Wifi";
 import DeveloperModeIcon from "@material-ui/icons/DeveloperMode";
@@ -19,7 +19,8 @@ import Button from "@material-ui/core/Button";
 import Switch from "@material-ui/core/Switch";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import Paper from "@material-ui/core/Paper";
-import { getWifiList, switchWifiMode } from "../redux/actions/dataActions";
+import { getWifiList, switchWifiMode, connectWifi,forgetWifi,setWifiPriority } from "../redux/actions/wifiAction";
+import { setConfirmDialog } from "../redux/actions/uiAction";
 import SignalWifi0BarIcon from "@material-ui/icons/SignalWifi0Bar";
 import SignalWifi1BarIcon from "@material-ui/icons/SignalWifi1Bar";
 import SignalWifi2BarIcon from "@material-ui/icons/SignalWifi2Bar";
@@ -42,6 +43,8 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import ClearRoundedIcon from "@material-ui/icons/ClearRounded";
 import IconButton from "@material-ui/core/IconButton";
+
+import {PasswordInput} from '../components/MyInputs'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -102,6 +105,37 @@ const SubMenuTitle = ({ setSubMenu, name, classes, children }) => {
   );
 };
 
+const PasswordDialog = ({open,psk,encryption,ssid,setPasswordDialog,connectWifi}) => {
+    const handleClose = () => {
+        setPasswordDialog(state=>({...state,open:false,psk:""}));
+    }
+    return (
+      <SlideDialog open={open} handleClose={handleClose}>
+        <SlideDialogTitle title={encryption==='on'?'Enter Password':'Join Network'} handleClose={handleClose}/>
+        <Divider />
+        <div style={{ backgroundColor: "#EEE", height: "100%" }}>
+        <Typography style={{margin:'1em', color:'#444'}}>
+            {encryption==='on'?`Enter Password for ${ssid}`:`Are you sure to join insecure network ${ssid}?`}
+        </Typography>
+      
+        
+        {encryption==='on' && <PasswordInput
+          style={{margin:'0.2em 5%', width:'90%', maxWidth:'400px'}}
+          value={psk}
+          onChange={(e)=>setPasswordDialog(state=>({...state,psk:e.target.value}))}
+        />
+        }
+
+        <DialogRowButton
+        color="primary"
+        disabled={ ((encryption==='on') && (psk.length<8))?true:null}
+        style={{textAlign:"center", }}
+        >{((encryption==='on') && (psk.length<8))?"password too short":'Join'}</DialogRowButton>
+        </div>
+      </SlideDialog>
+    )
+}
+
 const wifiIcon = (quality, encryption) => {
   if (encryption === "on") {
     if (quality >= 4) {
@@ -138,11 +172,12 @@ const DialogRowButton = ({ children, style, ...rest }) => {
       style={{
         display: "block",
         width: "100%",
-        padding: "0.75em 5%",
+        padding: "10.5px 5%",
         textTransform: "none",
         backgroundColor: "#FFF",
         margin: "2em 0",
         textAlign: "left",
+        fontSize: "1rem",
         ...style,
       }}
       {...rest}
@@ -152,7 +187,8 @@ const DialogRowButton = ({ children, style, ...rest }) => {
   );
 };
 
-const DialogKeyValueRow = ({ name, value }) => {
+const DialogKeyValueRow = ({ name, value , ph}) => {
+
   return (
     <div
       style={{
@@ -165,55 +201,101 @@ const DialogKeyValueRow = ({ name, value }) => {
       <Typography style={{ padding: "10.5px 5%" }}>
         {name}{" "}
         <span style={{ position: "absolute", right: "1em", color: "#777" }}>
-          {value}
+          {value || (ph ? ph : "N/A")}
         </span>
       </Typography>
     </div>
   );
 };
 
+const SlideDialogTitle = ({title,handleClose})=><DialogTitle        
+style={{ textAlign: "center", backgroundColor: "#FFF" }}
+>
+{title}
+<IconButton
+  style={{ position: "absolute", right: "1em", top: "10px" }}
+  onClick={handleClose}
+>
+  <ClearRoundedIcon />
+</IconButton>
+</DialogTitle>
+
 const WifiInfoDialog = ({
   open,
   setWifiInfoDialog,
+  isConnected,
   ssid,
   address,
   encryption,
   frequency,
   psk,
   quality,
+  forgetWifi,
+  setPasswordDialog,
+  setConfirmDialog
 }) => {
+
   const handleClose = () =>
     setWifiInfoDialog((state) => ({ ...state, open: false }));
 
+const [password,setPassword] = useState(psk || "");
+useEffect(()=>{
+  setPassword(psk);
+},[psk])
+
+
   return (
     <SlideDialog open={open} handleClose={handleClose}>
-      <DialogTitle
-        id="scroll-dialog-title"
-        style={{ textAlign: "center", backgroundColor: "#FFF" }}
-      >
-        {ssid}
-        <IconButton
-          style={{ position: "absolute", right: "1em", top: "10px" }}
-          onClick={handleClose}
-        >
-          <ClearRoundedIcon />
-        </IconButton>
-      </DialogTitle>
+      <SlideDialogTitle title={ssid} handleClose={handleClose}/>
       <Divider />
       <div style={{ backgroundColor: "#EEE", height: "100%" }}>
         <DialogRowButton
           color="primary"
           onClick={() => {
-            console.log("Join", ssid);
+            if (psk) {
+                if (isConnected){
+                    handleClose();
+                    setConfirmDialog({
+                        open:true, 
+                        title:`Disconnect ${ssid}`,
+                        message: "Are you sure you want to disconnect from the current network?",
+                        onConfirm: () => {forgetWifi(ssid)},
+                    })
+                } else {
+                    handleClose();
+                    forgetWifi(ssid);
+                    console.log('this is not connected, forget')
+                }
+            } else {
+                handleClose();
+                setPasswordDialog({open:true,ssid,psk:"",encryption})
+            }
           }}
         >
           {psk ? "Forget This Network" : "Join This Network"}
         </DialogRowButton>
+          {
+              (psk && password!==undefined) &&
+              <>
+              <PasswordInput
+              style={{margin:'0px 5%', width:'90%', maxWidth:'400px'}}              
+              value={password}
+              disabled={false}
+              onChange={(e)=>setPassword(e.target.value)}
+            />
+            <DialogRowButton
+        color="primary"
+        disabled={ ((encryption==='on') && (password.length<8))?true:null}
+        style={{textAlign:"center", }}
+        >{((encryption==='on') && (password.length<8))?"password too short":'Save'}</DialogRowButton>
+            </>
+          }
 
         <DialogKeyValueRow name="Wi-Fi Address" value={address} />
         <DialogKeyValueRow name="Encryption" value={encryption} />
         <DialogKeyValueRow name="Frequency" value={frequency} />
         <DialogKeyValueRow name="Signal Quality" value={quality} />
+        
       </div>
     </SlideDialog>
   );
@@ -226,6 +308,7 @@ const WifiItems = ({
   address,
   isConnected,
   handleWifiInfoDialogOpen,
+  setPasswordDialog
 }) => {
   const signalQuality = quality
     ? Math.floor((quality.split("/")[0] / quality.split("/")[1]) * 6)
@@ -234,10 +317,17 @@ const WifiItems = ({
 
   return (
     <ListItem
-      button
-      disabled={signalQuality === -1 && !isConnected}
+      button      
       onClick={() => {
-        console.log("connected to ", ssid);
+        if (signalQuality === -1 && !isConnected) {
+            console.log(ssid, 'is not available')
+        } else if (isConnected){
+            console.log('currently connected to ', ssid)
+        } else {
+            console.log("connected reader to ", ssid);
+            setPasswordDialog({open:true,ssid,psk:"",encryption:encryption})
+        }
+        
       }}
     >
       <ListItemIcon style={{ minWidth: "2em" }}>
@@ -262,7 +352,15 @@ const WifiItems = ({
   );
 };
 
-const WifiMenu = ({ classes, wifiStatus, getWifiList, switchWifiMode }) => {
+const WifiSubMenu = ({ classes, 
+    wifiStatus, 
+    getWifiList, 
+    switchWifiMode,
+    forgetWifi,
+    connectWifi,
+    setWifiPriority,
+    setConfirmDialog
+ }) => {
   useEffect(() => {
     getWifiList();
   }, [getWifiList]);
@@ -279,21 +377,35 @@ const WifiMenu = ({ classes, wifiStatus, getWifiList, switchWifiMode }) => {
 
   const [wifiInfoDialog, setWifiInfoDialog] = useState({ open: false });
 
+  const [passwordDialog, setPasswordDialog] = useState({ open: false, ssid:'',psk: "" ,encryption:'on'});
+
+  
+
   const handleWifiInfoDialogOpen = (ssid) => {
     setWifiInfoDialog({
       open: true,
+      isConnected: ssid === connectedNetwork.ssid,
       ...availableNetworks[ssid],
       ...knownNetworks.filter((i) => i.ssid === ssid)[0],
     });
   };
 
-  console.log(wifiInfoDialog);
+  
 
   return (
     <>
       <WifiInfoDialog
         {...wifiInfoDialog}
         setWifiInfoDialog={setWifiInfoDialog}
+        forgetWifi={forgetWifi}
+        setPasswordDialog={setPasswordDialog}
+        setConfirmDialog={setConfirmDialog}
+      />
+      <PasswordDialog
+        {...passwordDialog}
+        setPasswordDialog={setPasswordDialog}
+        connectWifi = {connectWifi}
+        
       />
 
       <Paper style={{}}>
@@ -336,7 +448,7 @@ const WifiMenu = ({ classes, wifiStatus, getWifiList, switchWifiMode }) => {
             Known Networks
           </Typography>
           <Paper>
-            <InsertDivider>
+            <ListItemDivider>
               {knownNetworks.map(({ ssid: _ssid, psk }, idx) => (
                 <WifiItems
                   key={_ssid}
@@ -345,7 +457,7 @@ const WifiMenu = ({ classes, wifiStatus, getWifiList, switchWifiMode }) => {
                   handleWifiInfoDialogOpen={handleWifiInfoDialogOpen}
                 />
               ))}
-            </InsertDivider>
+            </ListItemDivider>
           </Paper>
 
           <div style={{ marginTop: "1em" }}>
@@ -365,11 +477,11 @@ const WifiMenu = ({ classes, wifiStatus, getWifiList, switchWifiMode }) => {
               style={{ paddingLeft: "1.5em" }}
               variant="subtitle2"
             >
-              Error in getting Wi-Fi network list
+              Error in loading Wi-Fi Settings
             </Typography>
           )}
           <Paper>
-            <InsertDivider>
+            <ListItemDivider>
               {Object.keys(availableNetworks)
                 .filter((i) => !knownNetworks.map((i) => i.ssid).includes(i))
                 .map((ssid, idx) => (
@@ -377,9 +489,10 @@ const WifiMenu = ({ classes, wifiStatus, getWifiList, switchWifiMode }) => {
                     key={ssid}
                     {...availableNetworks[ssid]}
                     handleWifiInfoDialogOpen={handleWifiInfoDialogOpen}
+                    setPasswordDialog={setPasswordDialog}
                   />
                 ))}
-            </InsertDivider>
+            </ListItemDivider>
           </Paper>
         </>
       )}
@@ -387,7 +500,10 @@ const WifiMenu = ({ classes, wifiStatus, getWifiList, switchWifiMode }) => {
   );
 };
 
-const InsertDivider = ({ children }) => {
+/**
+ * Insert a line divider between list items
+ */
+const ListItemDivider = ({ children }) => {
   return children.length > 1 ? (
     <>
       {children.slice(0, -1).map((child, idx) => (
@@ -482,7 +598,7 @@ export const SettingsTab = (props) => {
     case "wifi":
       return (
         <SubMenuTitle name="Wi-Fi" classes={classes} setSubMenu={setSubMenu}>
-          <WifiMenu classes={classes} {...props} />
+          <WifiSubMenu classes={classes} {...props} />
         </SubMenuTitle>
       );
     default:
@@ -503,6 +619,10 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
   getWifiList,
   switchWifiMode,
+  forgetWifi,
+  connectWifi,
+  setWifiPriority,
+  setConfirmDialog
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsTab);
