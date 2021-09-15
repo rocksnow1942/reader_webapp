@@ -31,18 +31,17 @@ import SignalWifi2BarLockIcon from "@material-ui/icons/SignalWifi2BarLock";
 import SignalWifi3BarLockIcon from "@material-ui/icons/SignalWifi3BarLock";
 import SignalWifi4BarLockIcon from "@material-ui/icons/SignalWifi4BarLock";
 import CheckIcon from "@material-ui/icons/Check";
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
 import SignalWifiOffIcon from "@material-ui/icons/SignalWifiOff";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 import SlideDialog from "../components/SlideDialog";
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import ClearRoundedIcon from '@material-ui/icons/ClearRounded';
-import IconButton from '@material-ui/core/IconButton';
-
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import ClearRoundedIcon from "@material-ui/icons/ClearRounded";
+import IconButton from "@material-ui/core/IconButton";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -103,7 +102,6 @@ const SubMenuTitle = ({ setSubMenu, name, classes, children }) => {
   );
 };
 
-
 const wifiIcon = (quality, encryption) => {
   if (encryption === "on") {
     if (quality >= 4) {
@@ -134,52 +132,101 @@ const wifiIcon = (quality, encryption) => {
   }
 };
 
-
-const DialogRowButton = ({ children, style, ...rest}) =>{
-
-  return <Button style={{display:'block',width:'100%' , padding:'0.75em 5%', textTransform:'none', backgroundColor:'#FFF', margin:'2em 0',  textAlign:'left',...style}} {...rest}>
-        {children}
+const DialogRowButton = ({ children, style, ...rest }) => {
+  return (
+    <Button
+      style={{
+        display: "block",
+        width: "100%",
+        padding: "0.75em 5%",
+        textTransform: "none",
+        backgroundColor: "#FFF",
+        margin: "2em 0",
+        textAlign: "left",
+        ...style,
+      }}
+      {...rest}
+    >
+      {children}
     </Button>
-}
+  );
+};
 
-const DialogKeyValueRow = ({name,value}) => {
-  return <div style={{width:'100%' , textTransform:'none', backgroundColor:'#FFF', margin:'2em 0',  }}>
-  <Typography style={{ padding:'10.5px 5%',}}> 
-  {name} <span style={{position:'absolute',right:'1em', color:'#777'}}>{value}</span>
-  </Typography>
-</div>
-}
-
-const WifiInfoDialog = ({open, setWifiInfoDialog, ssid, address, encryption, frequency, psk, quality, }) => {
-  
-  const handleClose = () => setWifiInfoDialog(state=>({...state, open:false}));
-
- 
-
-  return <SlideDialog open={open} handleClose={handleClose}>
-    
-    <DialogTitle id="scroll-dialog-title" style={{textAlign:'center', backgroundColor:'#FFF'}}>{ssid}
-      <IconButton style={{position:'absolute',right:'1em', top:'10px'}} onClick={handleClose}>
-        <ClearRoundedIcon/>
-      </IconButton>
-    </DialogTitle>
-    <Divider/>
-    <div style={{backgroundColor:'#EEE', height:'100%'}}>  
-          <DialogRowButton  color='primary' onClick={()=>{console.log('Join' , ssid)}}>
-            {psk?'Forget This Network':'Join This Network'}
-          </DialogRowButton>
-
-          <DialogKeyValueRow name='Wi-Fi Address' value={address}/>
-          <DialogKeyValueRow name='Encryption' value={encryption}/>
-          <DialogKeyValueRow name='Frequency' value={frequency}/>
-          <DialogKeyValueRow name='Signal Quality' value={quality}/>
-      
+const DialogKeyValueRow = ({ name, value }) => {
+  return (
+    <div
+      style={{
+        width: "100%",
+        textTransform: "none",
+        backgroundColor: "#FFF",
+        margin: "2em 0",
+      }}
+    >
+      <Typography style={{ padding: "10.5px 5%" }}>
+        {name}{" "}
+        <span style={{ position: "absolute", right: "1em", color: "#777" }}>
+          {value}
+        </span>
+      </Typography>
     </div>
-  </SlideDialog>
-}
+  );
+};
 
+const WifiInfoDialog = ({
+  open,
+  setWifiInfoDialog,
+  ssid,
+  address,
+  encryption,
+  frequency,
+  psk,
+  quality,
+}) => {
+  const handleClose = () =>
+    setWifiInfoDialog((state) => ({ ...state, open: false }));
 
-const WifiItems = ({ ssid, quality, encryption, address, isConnected, handleWifiInfoDialogOpen }) => {
+  return (
+    <SlideDialog open={open} handleClose={handleClose}>
+      <DialogTitle
+        id="scroll-dialog-title"
+        style={{ textAlign: "center", backgroundColor: "#FFF" }}
+      >
+        {ssid}
+        <IconButton
+          style={{ position: "absolute", right: "1em", top: "10px" }}
+          onClick={handleClose}
+        >
+          <ClearRoundedIcon />
+        </IconButton>
+      </DialogTitle>
+      <Divider />
+      <div style={{ backgroundColor: "#EEE", height: "100%" }}>
+        <DialogRowButton
+          color="primary"
+          onClick={() => {
+            console.log("Join", ssid);
+          }}
+        >
+          {psk ? "Forget This Network" : "Join This Network"}
+        </DialogRowButton>
+
+        <DialogKeyValueRow name="Wi-Fi Address" value={address} />
+        <DialogKeyValueRow name="Encryption" value={encryption} />
+        <DialogKeyValueRow name="Frequency" value={frequency} />
+        <DialogKeyValueRow name="Signal Quality" value={quality} />
+      </div>
+    </SlideDialog>
+  );
+};
+
+const WifiItems = ({
+  ssid,
+  quality,
+  encryption,
+  address,
+  isConnected,
+  handleWifiInfoDialogOpen,
+}) => {
   const signalQuality = quality
     ? Math.floor((quality.split("/")[0] / quality.split("/")[1]) * 6)
     : -1;
@@ -202,13 +249,14 @@ const WifiItems = ({ ssid, quality, encryption, address, isConnected, handleWifi
         <WifiIcon />
       </ListItemIcon>
 
-
-      <ListItemIcon style={{ minWidth: "2em" , marginLeft:'5px'}}>
-        <InfoOutlinedIcon onClick={(e)=>{
+      <ListItemIcon style={{ minWidth: "2em", marginLeft: "5px" }}>
+        <InfoOutlinedIcon
+          onClick={(e) => {
             e.stopPropagation();
             // need to implement info dialog
             handleWifiInfoDialogOpen(ssid);
-        }} />
+          }}
+        />
       </ListItemIcon>
     </ListItem>
   );
@@ -229,19 +277,24 @@ const WifiMenu = ({ classes, wifiStatus, getWifiList, switchWifiMode }) => {
     address: "",
   };
 
-  const [wifiInfoDialog,setWifiInfoDialog] = useState({open:false});
+  const [wifiInfoDialog, setWifiInfoDialog] = useState({ open: false });
 
-  const handleWifiInfoDialogOpen = (ssid) => {      
-    setWifiInfoDialog({open:true, 
-      ...availableNetworks[ssid], 
-      ...knownNetworks.filter(i=>i.ssid===ssid)[0]});
-  }
+  const handleWifiInfoDialogOpen = (ssid) => {
+    setWifiInfoDialog({
+      open: true,
+      ...availableNetworks[ssid],
+      ...knownNetworks.filter((i) => i.ssid === ssid)[0],
+    });
+  };
 
-  console.log(wifiInfoDialog)
+  console.log(wifiInfoDialog);
 
   return (
     <>
-    <WifiInfoDialog  {...wifiInfoDialog} setWifiInfoDialog={setWifiInfoDialog}/>
+      <WifiInfoDialog
+        {...wifiInfoDialog}
+        setWifiInfoDialog={setWifiInfoDialog}
+      />
 
       <Paper style={{}}>
         <div
@@ -260,7 +313,7 @@ const WifiMenu = ({ classes, wifiStatus, getWifiList, switchWifiMode }) => {
             checked={mode === "client" ? true : false}
             style={{ flexGrow: 1 }}
             onChange={() => {
-              switchWifiMode(mode==='client' ? "ap" : "client");
+              switchWifiMode(mode === "client" ? "ap" : "client");
             }}
             color="primary"
           />
@@ -268,60 +321,68 @@ const WifiMenu = ({ classes, wifiStatus, getWifiList, switchWifiMode }) => {
 
         {/* {ssid && <WifiItems {...connectedNetwork} isConnected={true}/>} */}
       </Paper>
-      {
-        mode==='ap'? 
-        <Typography 
-            style={{ paddingLeft: "1.5em" , color:'#666'}}
-            
-            variant='subtitle2'>Turn on to connect reader to Wi-Fi network</Typography>
-        :
+      {mode === "ap" ? (
+        <Typography
+          style={{ paddingLeft: "1.5em", color: "#666" }}
+          variant="subtitle2"
+        >
+          Turn on to connect reader to Wi-Fi network
+        </Typography>
+      ) : (
         <>
-        <Typography style={{ marginTop: "1em", paddingLeft: "1em", fontSize: 18 }}>
-        Known Networks
-        </Typography>
-      <Paper>
-        <InsertDivider>
-        {knownNetworks.map(({ssid:_ssid,psk},idx) => (
-          <WifiItems
-            key={_ssid}
-            isConnected={ssid === _ssid}
-            {...(availableNetworks[_ssid] || { ssid: _ssid })}
-            handleWifiInfoDialogOpen={handleWifiInfoDialogOpen}
-          />
-        ))}
-        </InsertDivider>
-      </Paper>
+          <Typography
+            style={{ marginTop: "1em", paddingLeft: "1em", fontSize: 18 }}
+          >
+            Known Networks
+          </Typography>
+          <Paper>
+            <InsertDivider>
+              {knownNetworks.map(({ ssid: _ssid, psk }, idx) => (
+                <WifiItems
+                  key={_ssid}
+                  isConnected={ssid === _ssid}
+                  {...(availableNetworks[_ssid] || { ssid: _ssid })}
+                  handleWifiInfoDialogOpen={handleWifiInfoDialogOpen}
+                />
+              ))}
+            </InsertDivider>
+          </Paper>
 
-      <div style={{ marginTop: "1em" }}>
-        <Typography component="span" style={{ padding: "1em", fontSize: 18 }}>        
-        Available Networks
-        </Typography>
-        {loading && (
-          <CircularProgress size={18} style={{ position: "relative" }} />
-        )}
-      </div>
-      {
-        error && <Typography color='secondary' 
-            style={{ paddingLeft: "1.5em" }}
-            variant='subtitle2'>Error in getting Wi-Fi network list</Typography>
-      }
-      <Paper>
-        <InsertDivider>
-        {Object.keys(availableNetworks)
-          .filter((i) => !knownNetworks.map(i=>i.ssid).includes(i))
-          .map((ssid,idx) => (
-            <WifiItems key={ssid} {...availableNetworks[ssid]} 
-            handleWifiInfoDialogOpen={handleWifiInfoDialogOpen}
-            />
-          ))}
-          </InsertDivider>
-      </Paper>
-
+          <div style={{ marginTop: "1em" }}>
+            <Typography
+              component="span"
+              style={{ padding: "1em", fontSize: 18 }}
+            >
+              Available Networks
+            </Typography>
+            {loading && (
+              <CircularProgress size={18} style={{ position: "relative" }} />
+            )}
+          </div>
+          {error && (
+            <Typography
+              color="secondary"
+              style={{ paddingLeft: "1.5em" }}
+              variant="subtitle2"
+            >
+              Error in getting Wi-Fi network list
+            </Typography>
+          )}
+          <Paper>
+            <InsertDivider>
+              {Object.keys(availableNetworks)
+                .filter((i) => !knownNetworks.map((i) => i.ssid).includes(i))
+                .map((ssid, idx) => (
+                  <WifiItems
+                    key={ssid}
+                    {...availableNetworks[ssid]}
+                    handleWifiInfoDialogOpen={handleWifiInfoDialogOpen}
+                  />
+                ))}
+            </InsertDivider>
+          </Paper>
         </>
-      }
-
-
-     
+      )}
     </>
   );
 };
@@ -332,14 +393,15 @@ const InsertDivider = ({ children }) => {
       {children.slice(0, -1).map((child, idx) => (
         <React.Fragment key={idx}>
           {child}
-          <Divider variant='middle' />
+          <Divider variant="middle" />
         </React.Fragment>
       ))}
       {children[children.length - 1]}
-    </> ) :
-    <>{children}</>;
-
-}
+    </>
+  ) : (
+    <>{children}</>
+  );
+};
 
 const MainMenu = ({ classes, currentFirmwareVer, setSubMenu }) => {
   return (
