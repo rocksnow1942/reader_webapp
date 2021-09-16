@@ -24,9 +24,9 @@ const initialState = {
     // each snack bar is an object with the following properties:
     // - id: unique identifier for the snack bar (use Date.now())
     // - message: the message to display
-    // - type: the type of snack bar (success, error, warning, info)
-    // - autoHideDuration: the duration in ms to display the snack bar
-    // - onClose: the function to call when the snack bar is closed    
+    // - type (default success): the type of snack bar (success, error, warning, info)
+    // - autoHideDuration (default 3000ms): the duration in ms to display the snack bar
+    // - onClose (optional): the function to call when the snack bar is closed    
     snackbar: [],
 }
 

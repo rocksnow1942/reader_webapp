@@ -16,6 +16,15 @@ export const setConfirmDialog = (payload)=>(dispatch)=>{
     })
 }
 
+/**
+ * create a global snack alert
+ * @param {{message:string, 
+ * type:string,
+ * onClose:function,
+ * autoHideDuration:number,
+ * }} payload the payload of the snack alert
+ * @returns 
+ */
 export const createSnackAlert = (payload)=>(dispatch)=>{
     dispatch({
         type: SET_SNACK_ALERT,

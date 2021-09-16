@@ -1,70 +1,67 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 import { connect } from "react-redux";
-
-import { makeStyles } from "@material-ui/core/styles";
-import BottomNavigation from "@material-ui/core/BottomNavigation";
-import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
-import HistoryIcon from "@material-ui/icons/History";
-import HomeIcon from "@material-ui/icons/Home";
-import SettingsIcon from "@material-ui/icons/Settings";
-
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-
-import ConfirmDialog from "./ConfirmDialog";
-
 import { closeSnackAlert } from "../redux/actions/uiAction";
 
+const getAutoHideDuration = (type, autoHideDuration) => {
+  switch (type) {
+    case "error":
+      return autoHideDuration || 30000;
+    case "info":
+      return autoHideDuration || 5000;
+    case "success":
+      return autoHideDuration || 3000;
+    case "warning":
+      return autoHideDuration || 10000;
+    default:
+      return autoHideDuration || 5000;
+  }
+};
+
 export const SnackBarAlert = ({ snackbar, closeSnackAlert }) => {
-  const handleClose = (id, reason, onClose) => {
-    if (reason === "clickaway") {
-      return;
-    }
+  const handleClose = (id, reason, onClose) => {    
     if (onClose) onClose();
     closeSnackAlert(id);
   };
   if (snackbar.length === 0) return null;
 
-  return snackbar.map(({ id, message, type, autoHideDuration, onClose }) => (
-    <Snackbar
-      open={true}
-      autoHideDuration={1000}
-      onClose={(event, reason) => {
-        if (reason === "timeout") {
-        } else {
-          setOpen(false);
-        }
-      }}
-      className={classes.snackbar}
-      anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
-      // disableWindowBlurListener
-      ClickAwayListenerProps={{
-        // onClickAway: () => {}
-        mouseEvent: false,
-        touchEvent: false,
-      }}
-    >      
-      <MuiAlert
-        elevation={6}
-        variant="filled"
-        onClose={(e,rea) => {
-          
+  return snackbar.map(
+    ({ id, message, type, autoHideDuration, onClose }, idx) => (
+      <Snackbar
+        open={true}
+        autoHideDuration={getAutoHideDuration(type, autoHideDuration)}
+        onClose={(event, reason) => {
+          handleClose(id, reason, onClose);
         }}
-        severity={type||'success'}
+        style={{
+          bottom: 80 + (idx) * 55 + "px",
+        }}
+        anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
+        // disableWindowBlurListener
+        ClickAwayListenerProps={{
+          mouseEvent: false,
+          touchEvent: false,
+        }}
       >
-        This is a success message!
-      </MuiAlert>
-    </Snackbar>
-  ));
-};
-
-SnackBarAlert.propTypes = {
-  props: PropTypes,
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          onClose={() => {
+            handleClose(id, "close", onClose);
+          }}
+          severity={type || "success"}
+        >
+          {message}
+        </MuiAlert>
+      </Snackbar>
+    )
+  );
 };
 
 const mapStateToProps = (state) => ({
-  snackbar: state.UI.snackbar,
+  snackbar: state.ui.snackbar,
 });
 
 const mapDispatchToProps = {

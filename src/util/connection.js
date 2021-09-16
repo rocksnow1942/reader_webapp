@@ -1,4 +1,4 @@
-import {wsMessageHandler,wsOnOpen,wsOnError,wsOnClose} from '../redux/actions/dataActions'
+import {wsMessageHandler,wsOnOpen,wsOnError,wsOnClose} from '../redux/actions/websocketAction'
 
 
 class MyWebSocket {

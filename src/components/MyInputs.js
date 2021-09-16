@@ -13,7 +13,7 @@ import TextField from "@material-ui/core/TextField";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 
-export function PasswordInput({ value, onChange, ...rest }) {
+export function PasswordInput({ value, onChange, label, ...rest }) {
   const [showPassword, setShowPassword] = React.useState(false);
 
   const handleMouseDownPassword = (event) => {
@@ -21,12 +21,13 @@ export function PasswordInput({ value, onChange, ...rest }) {
   };
 
   return (
-    <FormControl {...rest}>
-      <InputLabel>Password</InputLabel>
+    <FormControl component='form' {...rest}>
+      <InputLabel>{label || 'Password'}</InputLabel>
       <Input
         type={showPassword ? "text" : "password"}
         value={value}
         onChange={onChange}
+        autoComplete='none'
         endAdornment={
           <InputAdornment position="end">
             <IconButton

@@ -1,10 +1,10 @@
 import {    
     SET_WIFI_STATUS,
     FORGET_WIFI_NETWORK,
-    SET_WIFI_NETWORKS
+    SET_WIFI_NETWORKS,    
   } from "../types";
 import ws from "../../util/connection";
-
+import {createSnackAlert} from './uiAction'
   
 
 
@@ -44,10 +44,13 @@ export const getWifiList = () => (dispatch) => {
 
     dispatch({type:SET_WIFI_STATUS,payload:{mode}})
     if (mode==='ap' && ssid){
-      // if user swithces to ap mode and there is a ssid, then set reader to ap mode.
+      // if user swithces to ap mode and 
+      // and the reader is connected to a wifi network (reader currently in client mode), 
+      // then set reader to ap mode.
       ws.get({ action: "peripheral.setWifiMode", mode: "ap" })
       .then(data=>{
         dispatch({type:SET_WIFI_STATUS,payload:{mode:'ap',ssid:''}})
+        dispatch(createSnackAlert({message:'Reader switched to AP mode'}))
         ws.close()
       })
       .catch(err=>{
@@ -66,7 +69,7 @@ export const getWifiList = () => (dispatch) => {
     ws.get({action:'peripheral.setWifiPassword',ssid,pwd})
     .then(data=>{
       // send a snapbar to the user
-
+      dispatch(createSnackAlert({message:`Reader is connecting to ${ssid}...`,type:'info'}))
       ws.close()
     })
     .catch(err=>{
@@ -85,9 +88,13 @@ export const getWifiList = () => (dispatch) => {
     ws.get({action:'peripheral.removeWifiPassword',ssid})
     .then(data=>{
       dispatch({type:FORGET_WIFI_NETWORK,payload:ssid})
+      
       if (currentSSID === ssid) {
+        dispatch(createSnackAlert({message:`Disconnecting from Wi-Fi network ${ssid}...`,type:'info'}))
         ws.close()
-      }    
+      }  else {
+        dispatch(createSnackAlert({message:`Removed Wi-Fi network ${ssid}`,type:'success'}))
+      }
     })
     .catch(err=>{
       console.log(err)
@@ -105,8 +112,9 @@ export const getWifiList = () => (dispatch) => {
     ws.get({action:'peripheral.setWifiPriority',ssid})
     .then(data=>{    
       if (currentSSID !== ssid) {
+        dispatch(createSnackAlert({message:`Reader is connecting to ${ssid}...`,type:'info'}))
         ws.close()
-      }    
+      }
     })
     .catch(err=>{
       console.log(err)
@@ -125,6 +133,7 @@ export const setWifiPassword = (ssid,psk)=>dispatch=>{
   ws.get({action:'peripheral.updateWifiPassword',ssid,pwd:psk})
   .then(data=>{
       dispatch({type:SET_WIFI_NETWORKS,payload:{ssid,psk}})
+      dispatch(createSnackAlert({message:`Password for ${ssid} is updated`,type:'info'}))
   })
   .catch(err=>{
     console.log(err)

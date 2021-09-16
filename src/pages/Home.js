@@ -9,8 +9,7 @@ import HistoryIcon from "@material-ui/icons/History";
 import HomeIcon from "@material-ui/icons/Home";
 import SettingsIcon from "@material-ui/icons/Settings";
 
-import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert from "@material-ui/lab/Alert";
+import SnackBarAlert from '../components/SnackBarAlert'
 
 import ConfirmDialog from "../components/ConfirmDialog";
 
@@ -87,39 +86,11 @@ export const Home = (props) => {
         <BottomNavigationAction label="Settings" icon={<SettingsIcon />} />
       </BottomNavigation>
 
-      <Snackbar
-        open={true}
-        autoHideDuration={1000}
-        onClose={(event, reason) => {            
-            if (reason === "timeout") {
-             
-            } else {
-                setOpen(false)
-            }
+        
           
-        }}
-        className={classes.snackbar}
-        anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
-        // disableWindowBlurListener
-        ClickAwayListenerProps={{
-            // onClickAway: () => {}
-            mouseEvent:false,
-            touchEvent:false
-        }}
-      >
-        <MuiAlert
-          elevation={6}
-          variant="filled"
-          onClose={() => {
-            setOpen(false);
-          }}
-          severity="success"
-        >
-          This is a success message!
-        </MuiAlert>
-      </Snackbar>
-          
-          {/* Global confirmdialog */}
+        {/* Global snack bar*/}
+        <SnackBarAlert/>
+        {/* Global confirmdialog */}
         <ConfirmDialog/>
     </div>
   );
