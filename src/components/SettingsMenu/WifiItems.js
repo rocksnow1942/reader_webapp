@@ -101,7 +101,7 @@ const WifiItems = ({
               setConfirmDialog({
                 open: true,
                 title: `Connect to ${ssid}`,
-                message: "Are you sure you want to connect to this network?",
+                message: `Do you want to connect to "${ssid}"?`,
                 onConfirm: () => {
                   setWifiPriority(ssid);
                 },
