@@ -63,9 +63,18 @@ export default function dataReducer(state = initialState, action) {
         case SET_WIFI_STATUS:
             return {...state,wifiStatus:{...state.wifiStatus,...payload}}
         case FORGET_WIFI_NETWORK:
-            // remove a ssid from knwonNetworks
-            const knownNetworks = state.wifiStatus.knownNetworks.filter(n => n.ssid !== payload)
-            return {...state,wifiStatus:{...state.wifiStatus,knownNetworks}}
+            // remove a ssid from knwonNetworks            
+            return {...state,wifiStatus:{...state.wifiStatus,
+                knownNetworks:state.wifiStatus.knownNetworks.filter(n => n.ssid !== payload)}}
+        case SET_WIFI_NETWORKS:
+            // set wifi psk and ssid in known networks
+            return {...state,wifiStatus:{...state.wifiStatus,
+                knownNetworks:state.wifiStatus.knownNetworks.map(n => {
+                    if (n.ssid === payload.ssid) {
+                        return {...n, ...payload}
+                    }
+                    return n
+                })}}
         default:
             return state
     }

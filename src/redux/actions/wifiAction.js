@@ -39,21 +39,21 @@ export const getWifiList = () => (dispatch) => {
    * @param {string} mode 'ap' or 'client'
    * @returns 
    */
-  export const switchWifiMode = (mode) => (dispatch) => {
-    
+  export const switchWifiMode = (mode) => (dispatch,getState) => {
+    const ssid = getState().data.wifiStatus.ssid
+
     dispatch({type:SET_WIFI_STATUS,payload:{mode}})
-  
-    // ws.get({action:'peripheral.setWifiMode',mode})
-    // .then(data=>{    
-    //   dispatch({type:SET_WIFI_STATUS,payload:{ssid:'',mode, message:"Wifi "}})
-  
-    //   ws.close()
-    // })
-    // .catch(err=>{
-    //   console.log(err)
-    //   dispatch({type:SET_WIFI_STATUS,payload:{loading:false,error:true}})
-    // })
-  
+    if (mode==='ap' && ssid){
+      // if user swithces to ap mode and there is a ssid, then set reader to ap mode.
+      ws.get({ action: "peripheral.setWifiMode", mode: "ap" })
+      .then(data=>{
+        dispatch({type:SET_WIFI_STATUS,payload:{mode:'ap',ssid:''}})
+        ws.close()
+      })
+      .catch(err=>{
+        dispatch({type:SET_WIFI_STATUS,payload:{mode:'client',error:'Error setting Wi-Fi mode. Please power cycle the reader and try again.'}})
+      })
+    }  
   }
   
   /**
@@ -62,16 +62,16 @@ export const getWifiList = () => (dispatch) => {
    * @param {string} pwd password for the new ssid
    * @returns 
    */
-  export const connectWifi = (ssid,pwd) => (dispatch) => {
-    
+  export const connectWifi = (ssid,pwd) => (dispatch,getState) => {    
     ws.get({action:'peripheral.setWifiPassword',ssid,pwd})
     .then(data=>{
-      
+      // send a snapbar to the user
+
       ws.close()
     })
     .catch(err=>{
       console.log(err)
-      dispatch({type:SET_WIFI_STATUS,payload:{loading:false,error:true}})
+      dispatch({type:SET_WIFI_STATUS,payload:{loading:false,error:"Error connecting to Wi-Fi"}})
     })
   }
   
@@ -81,7 +81,7 @@ export const getWifiList = () => (dispatch) => {
    * @returns 
    */
   export const forgetWifi = (ssid) => (dispatch,getState) => {
-    const currentSSID = getState().data.wifiStatus.ssid
+    const currentSSID = getState().data.wifiStatus.ssid    
     ws.get({action:'peripheral.removeWifiPassword',ssid})
     .then(data=>{
       dispatch({type:FORGET_WIFI_NETWORK,payload:ssid})
@@ -91,7 +91,7 @@ export const getWifiList = () => (dispatch) => {
     })
     .catch(err=>{
       console.log(err)
-      dispatch({type:SET_WIFI_STATUS,payload:{loading:false,error:true}})
+      dispatch({type:SET_WIFI_STATUS,payload:{loading:false,error:'Error configuring Wi-Fi Settings'}})
     })
   }
   
@@ -113,3 +113,21 @@ export const getWifiList = () => (dispatch) => {
       dispatch({type:SET_WIFI_STATUS,payload:{loading:false,error:true}})
     })
   }
+
+
+  /**
+   * set the password for an wifi, without connection to it.
+   * @param {string} ssid Wi-Fi SSID
+   * @param {string} psk Wi-Fi password
+   * @returns 
+   */
+export const setWifiPassword = (ssid,psk)=>dispatch=>{
+  ws.get({action:'peripheral.updateWifiPassword',ssid,pwd:psk})
+  .then(data=>{
+      dispatch({type:SET_WIFI_NETWORKS,payload:{ssid,psk}})
+  })
+  .catch(err=>{
+    console.log(err)
+    dispatch({type:SET_WIFI_STATUS,payload:{loading:false,error:true}})
+  })
+}

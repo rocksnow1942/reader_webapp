@@ -86,8 +86,9 @@ export const Home = (props) => {
         <BottomNavigationAction label="Home" icon={<HomeIcon />} />
         <BottomNavigationAction label="Settings" icon={<SettingsIcon />} />
       </BottomNavigation>
+
       <Snackbar
-        open={open}
+        open={true}
         autoHideDuration={1000}
         onClose={(event, reason) => {            
             if (reason === "timeout") {

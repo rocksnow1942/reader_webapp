@@ -19,7 +19,14 @@ import Button from "@material-ui/core/Button";
 import Switch from "@material-ui/core/Switch";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import Paper from "@material-ui/core/Paper";
-import { getWifiList, switchWifiMode, connectWifi,forgetWifi,setWifiPriority } from "../redux/actions/wifiAction";
+import {
+  getWifiList,
+  switchWifiMode,
+  connectWifi,
+  forgetWifi,
+  setWifiPriority,
+  setWifiPassword,
+} from "../redux/actions/wifiAction";
 import { setConfirmDialog } from "../redux/actions/uiAction";
 import SignalWifi0BarIcon from "@material-ui/icons/SignalWifi0Bar";
 import SignalWifi1BarIcon from "@material-ui/icons/SignalWifi1Bar";
@@ -44,7 +51,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import ClearRoundedIcon from "@material-ui/icons/ClearRounded";
 import IconButton from "@material-ui/core/IconButton";
 
-import {PasswordInput} from '../components/MyInputs'
+import { PasswordInput } from "../components/MyInputs";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -105,36 +112,58 @@ const SubMenuTitle = ({ setSubMenu, name, classes, children }) => {
   );
 };
 
-const PasswordDialog = ({open,psk,encryption,ssid,setPasswordDialog,connectWifi}) => {
-    const handleClose = () => {
-        setPasswordDialog(state=>({...state,open:false,psk:""}));
-    }
-    return (
-      <SlideDialog open={open} handleClose={handleClose}>
-        <SlideDialogTitle title={encryption==='on'?'Enter Password':'Join Network'} handleClose={handleClose}/>
-        <Divider />
-        <div style={{ backgroundColor: "#EEE", height: "100%" }}>
-        <Typography style={{margin:'1em', color:'#444'}}>
-            {encryption==='on'?`Enter Password for ${ssid}`:`Are you sure to join insecure network ${ssid}?`}
+const PasswordDialog = ({
+  open,
+  psk,
+  encryption,
+  ssid,
+  setPasswordDialog,
+  connectWifi,
+}) => {
+  const handleClose = () => {
+    setPasswordDialog((state) => ({ ...state, open: false, psk: "" }));
+  };
+  return (
+    <SlideDialog open={open} handleClose={handleClose}>
+      <SlideDialogTitle
+        title={encryption === "on" ? "Enter Password" : "Join Network"}
+        handleClose={handleClose}
+      />
+      <Divider />
+      <div style={{ backgroundColor: "#EEE", height: "100%" }}>
+        <Typography style={{ margin: "1em", color: "#444" }}>
+          {encryption === "on"
+            ? `Enter Password for ${ssid}`
+            : `Are you sure to join insecure network ${ssid}?`}
         </Typography>
-      
-        
-        {encryption==='on' && <PasswordInput
-          style={{margin:'0.2em 5%', width:'90%', maxWidth:'400px'}}
-          value={psk}
-          onChange={(e)=>setPasswordDialog(state=>({...state,psk:e.target.value}))}
-        />
-        }
+
+        {encryption === "on" && (
+          <PasswordInput
+            style={{ margin: "0.2em 5%", width: "90%", maxWidth: "400px" }}
+            value={psk}
+            onChange={(e) =>
+              setPasswordDialog((state) => ({ ...state, psk: e.target.value }))
+            }
+          />
+        )}
 
         <DialogRowButton
-        color="primary"
-        disabled={ ((encryption==='on') && (psk.length<8))?true:null}
-        style={{textAlign:"center", }}
-        >{((encryption==='on') && (psk.length<8))?"password too short":'Join'}</DialogRowButton>
-        </div>
-      </SlideDialog>
-    )
-}
+          color="primary"
+          disabled={encryption === "on" && psk.length < 8 ? true : null}
+          style={{ textAlign: "center" }}
+          onClick={() => {
+            handleClose();
+            connectWifi(ssid, psk);
+          }}
+        >
+          {encryption === "on" && psk.length < 8
+            ? "password too short"
+            : "Join"}
+        </DialogRowButton>
+      </div>
+    </SlideDialog>
+  );
+};
 
 const wifiIcon = (quality, encryption) => {
   if (encryption === "on") {
@@ -187,8 +216,7 @@ const DialogRowButton = ({ children, style, ...rest }) => {
   );
 };
 
-const DialogKeyValueRow = ({ name, value , ph}) => {
-
+const DialogKeyValueRow = ({ name, value, ph }) => {
   return (
     <div
       style={{
@@ -208,23 +236,24 @@ const DialogKeyValueRow = ({ name, value , ph}) => {
   );
 };
 
-const SlideDialogTitle = ({title,handleClose})=><DialogTitle        
-style={{ textAlign: "center", backgroundColor: "#FFF" }}
->
-{title}
-<IconButton
-  style={{ position: "absolute", right: "1em", top: "10px" }}
-  onClick={handleClose}
->
-  <ClearRoundedIcon />
-</IconButton>
-</DialogTitle>
+const SlideDialogTitle = ({ title, handleClose }) => (
+  <DialogTitle style={{ textAlign: "center", backgroundColor: "#FFF" }}>
+    {title}
+    <IconButton
+      style={{ position: "absolute", right: "1em", top: "10px" }}
+      onClick={handleClose}
+    >
+      <ClearRoundedIcon />
+    </IconButton>
+  </DialogTitle>
+);
 
 const WifiInfoDialog = ({
   open,
   setWifiInfoDialog,
   isConnected,
   ssid,
+  known,
   address,
   encryption,
   frequency,
@@ -232,70 +261,81 @@ const WifiInfoDialog = ({
   quality,
   forgetWifi,
   setPasswordDialog,
-  setConfirmDialog
+  setConfirmDialog,
+  setWifiPassword,
 }) => {
-
   const handleClose = () =>
     setWifiInfoDialog((state) => ({ ...state, open: false }));
 
-const [password,setPassword] = useState(psk || "");
-useEffect(()=>{
-  setPassword(psk);
-},[psk])
+  const [password, setPassword] = useState(psk || "");
 
+  useEffect(() => {
+    // update the password state when open close state changes
+    setPassword(psk);
+  }, [open, psk]);
 
   return (
     <SlideDialog open={open} handleClose={handleClose}>
-      <SlideDialogTitle title={ssid} handleClose={handleClose}/>
+      <SlideDialogTitle title={ssid} handleClose={handleClose} />
       <Divider />
       <div style={{ backgroundColor: "#EEE", height: "100%" }}>
         <DialogRowButton
           color="primary"
           onClick={() => {
-            if (psk) {
-                if (isConnected){
-                    handleClose();
-                    setConfirmDialog({
-                        open:true, 
-                        title:`Disconnect ${ssid}`,
-                        message: "Are you sure you want to disconnect from the current network?",
-                        onConfirm: () => {forgetWifi(ssid)},
-                    })
-                } else {
-                    handleClose();
-                    forgetWifi(ssid);
-                    console.log('this is not connected, forget')
-                }
-            } else {
+            if (known) {
+              if (isConnected) {
                 handleClose();
-                setPasswordDialog({open:true,ssid,psk:"",encryption})
+                setConfirmDialog({
+                  open: true,
+                  title: `Disconnect ${ssid}`,
+                  message:
+                    "Are you sure you want to disconnect reader from the current network?",
+                  onConfirm: () => {
+                    forgetWifi(ssid);
+                  },
+                });
+              } else {
+                handleClose();
+                forgetWifi(ssid);
+              }
+            } else {
+              handleClose();
+              setPasswordDialog({ open: true, ssid, psk: "", encryption });
             }
           }}
         >
-          {psk ? "Forget This Network" : "Join This Network"}
+          {known ? "Forget This Network" : "Join This Network"}
         </DialogRowButton>
-          {
-              (psk && password!==undefined) &&
-              <>
-              <PasswordInput
-              style={{margin:'0px 5%', width:'90%', maxWidth:'400px'}}              
+        {psk && password !== undefined && (
+          <>
+            <PasswordInput
+              style={{ margin: "0px 5%", width: "90%", maxWidth: "400px" }}
               value={password}
-              disabled={false}
-              onChange={(e)=>setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <DialogRowButton
-        color="primary"
-        disabled={ ((encryption==='on') && (password.length<8))?true:null}
-        style={{textAlign:"center", }}
-        >{((encryption==='on') && (password.length<8))?"password too short":'Save'}</DialogRowButton>
-            </>
-          }
+              color="primary"
+              disabled={
+                isConnected ||
+                (encryption === "on" && (password.length < 8 ? true : null))
+              }
+              style={{ textAlign: "center" }}
+              onClick={() => {
+                setWifiPassword(ssid, password);
+                handleClose();
+              }}
+            >
+              {encryption === "on" && password.length < 8
+                ? "password too short"
+                : "Save"}
+            </DialogRowButton>
+          </>
+        )}
 
         <DialogKeyValueRow name="Wi-Fi Address" value={address} />
         <DialogKeyValueRow name="Encryption" value={encryption} />
         <DialogKeyValueRow name="Frequency" value={frequency} />
         <DialogKeyValueRow name="Signal Quality" value={quality} />
-        
       </div>
     </SlideDialog>
   );
@@ -303,12 +343,15 @@ useEffect(()=>{
 
 const WifiItems = ({
   ssid,
+  known,
   quality,
   encryption,
   address,
   isConnected,
   handleWifiInfoDialogOpen,
-  setPasswordDialog
+  setPasswordDialog,
+  setWifiPriority,
+  setConfirmDialog,
 }) => {
   const signalQuality = quality
     ? Math.floor((quality.split("/")[0] / quality.split("/")[1]) * 6)
@@ -317,17 +360,31 @@ const WifiItems = ({
 
   return (
     <ListItem
-      button      
+      button
       onClick={() => {
-        if (signalQuality === -1 && !isConnected) {
-            console.log(ssid, 'is not available')
-        } else if (isConnected){
-            console.log('currently connected to ', ssid)
+        if (known) {
+          if (isConnected) {
+            handleWifiInfoDialogOpen(ssid);
+          } else if (signalQuality === -1) {
+            handleWifiInfoDialogOpen(ssid);
+          } else {
+            setConfirmDialog({
+              open: true,
+              title: `Connect to ${ssid}`,
+              message: "Are you sure you want to connect to this network?",
+              onConfirm: () => {
+                setWifiPriority(ssid);
+              },
+            });
+          }
         } else {
-            console.log("connected reader to ", ssid);
-            setPasswordDialog({open:true,ssid,psk:"",encryption:encryption})
+          setPasswordDialog({
+            open: true,
+            ssid,
+            psk: "",
+            encryption: encryption,
+          });
         }
-        
       }}
     >
       <ListItemIcon style={{ minWidth: "2em" }}>
@@ -352,15 +409,17 @@ const WifiItems = ({
   );
 };
 
-const WifiSubMenu = ({ classes, 
-    wifiStatus, 
-    getWifiList, 
-    switchWifiMode,
-    forgetWifi,
-    connectWifi,
-    setWifiPriority,
-    setConfirmDialog
- }) => {
+const WifiSubMenu = ({
+  classes,
+  wifiStatus,
+  getWifiList,
+  switchWifiMode,
+  forgetWifi,
+  connectWifi,
+  setWifiPriority,
+  setConfirmDialog,
+  setWifiPassword,
+}) => {
   useEffect(() => {
     getWifiList();
   }, [getWifiList]);
@@ -377,20 +436,22 @@ const WifiSubMenu = ({ classes,
 
   const [wifiInfoDialog, setWifiInfoDialog] = useState({ open: false });
 
-  const [passwordDialog, setPasswordDialog] = useState({ open: false, ssid:'',psk: "" ,encryption:'on'});
-
-  
+  const [passwordDialog, setPasswordDialog] = useState({
+    open: false,
+    ssid: "",
+    psk: "",
+    encryption: "on",
+  });
 
   const handleWifiInfoDialogOpen = (ssid) => {
     setWifiInfoDialog({
       open: true,
+      known: knownNetworks.map((i) => i.ssid).includes(ssid),
       isConnected: ssid === connectedNetwork.ssid,
       ...availableNetworks[ssid],
       ...knownNetworks.filter((i) => i.ssid === ssid)[0],
     });
   };
-
-  
 
   return (
     <>
@@ -400,12 +461,12 @@ const WifiSubMenu = ({ classes,
         forgetWifi={forgetWifi}
         setPasswordDialog={setPasswordDialog}
         setConfirmDialog={setConfirmDialog}
+        setWifiPassword={setWifiPassword}
       />
       <PasswordDialog
         {...passwordDialog}
         setPasswordDialog={setPasswordDialog}
-        connectWifi = {connectWifi}
-        
+        connectWifi={connectWifi}
       />
 
       <Paper style={{}}>
@@ -425,7 +486,21 @@ const WifiSubMenu = ({ classes,
             checked={mode === "client" ? true : false}
             style={{ flexGrow: 1 }}
             onChange={() => {
-              switchWifiMode(mode === "client" ? "ap" : "client");
+              if (ssid && mode === "client") {
+                // if ssid is set, this means reader is connected to WiFi.
+                // in this case, when user set mode to AP, we need to confirm he want to disconnect from WiFi
+                setConfirmDialog({
+                  open: true,
+                  title: "Disconnect Reader from Wi-Fi Networks",
+                  message:
+                    "Are you sure you want to disconnect Reader from Wi-Fi Networks? Reader will switch to hotspot mode.",
+                  onConfirm: () => {
+                    switchWifiMode("ap");
+                  },
+                });
+              } else {
+                switchWifiMode(mode === "ap" ? "client" : "ap");
+              }
             }}
             color="primary"
           />
@@ -433,9 +508,22 @@ const WifiSubMenu = ({ classes,
 
         {/* {ssid && <WifiItems {...connectedNetwork} isConnected={true}/>} */}
       </Paper>
+
+      {error && (
+        <Typography
+          color="secondary"
+          style={{ paddingLeft: "1.5em", marginTop: "0.5em" }}
+          variant="subtitle2"
+        >
+          {typeof error === "string"
+            ? error
+            : "Error in loading Wi-Fi Settings"}
+        </Typography>
+      )}
+
       {mode === "ap" ? (
         <Typography
-          style={{ paddingLeft: "1.5em", color: "#666" }}
+          style={{ padding: "0.5em 1.5em", color: "#666" }}
           variant="subtitle2"
         >
           Turn on to connect reader to Wi-Fi network
@@ -453,8 +541,11 @@ const WifiSubMenu = ({ classes,
                 <WifiItems
                   key={_ssid}
                   isConnected={ssid === _ssid}
+                  known={true}
                   {...(availableNetworks[_ssid] || { ssid: _ssid })}
                   handleWifiInfoDialogOpen={handleWifiInfoDialogOpen}
+                  setWifiPriority={setWifiPriority}
+                  setConfirmDialog={setConfirmDialog}
                 />
               ))}
             </ListItemDivider>
@@ -471,15 +562,7 @@ const WifiSubMenu = ({ classes,
               <CircularProgress size={18} style={{ position: "relative" }} />
             )}
           </div>
-          {error && (
-            <Typography
-              color="secondary"
-              style={{ paddingLeft: "1.5em" }}
-              variant="subtitle2"
-            >
-              Error in loading Wi-Fi Settings
-            </Typography>
-          )}
+
           <Paper>
             <ListItemDivider>
               {Object.keys(availableNetworks)
@@ -487,6 +570,7 @@ const WifiSubMenu = ({ classes,
                 .map((ssid, idx) => (
                   <WifiItems
                     key={ssid}
+                    known={false}
                     {...availableNetworks[ssid]}
                     handleWifiInfoDialogOpen={handleWifiInfoDialogOpen}
                     setPasswordDialog={setPasswordDialog}
@@ -622,7 +706,8 @@ const mapDispatchToProps = {
   forgetWifi,
   connectWifi,
   setWifiPriority,
-  setConfirmDialog
+  setConfirmDialog,
+  setWifiPassword,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SettingsTab);
