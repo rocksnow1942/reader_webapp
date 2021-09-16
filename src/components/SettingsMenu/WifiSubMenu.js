@@ -21,6 +21,7 @@ import ListItemDivider from '../ListItemDivider'
 import PasswordDialog from './WiFiPasswordDialog'
 import WifiInfoDialog from "./WifiInfoDialog";
 import WifiItems from './WifiItems'
+import { DialogRowButton } from "../SlideDialog";
 
 
 /**
@@ -195,8 +196,16 @@ const WifiSubMenu = ({
                       setPasswordDialog={setPasswordDialog}
                     />
                   ))}
-              </ListItemDivider>
+              </ListItemDivider>             
             </Paper>
+
+            <DialogRowButton
+                  onClick={getWifiList}
+                  style={{textAlign:'center'}}
+                  disabled={loading}
+              >
+                  Scan Wi-Fi Network
+            </DialogRowButton>
           </>
         )}
       </>
