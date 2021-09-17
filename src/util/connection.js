@@ -18,12 +18,15 @@ class MyWebSocket {
         this.errorHandler = wsOnError
         this.asyncHandler = []
         
+        
     }
     isConnected() {
         return this.ws && this.ws.readyState === WebSocket.OPEN
     }
-    connect() {
-        
+
+
+
+    connect() {        
         if (this.isConnected()) {            
             return}
         this.ws  = new WebSocket(this.webSocketAddr);        

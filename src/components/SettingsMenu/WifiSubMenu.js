@@ -3,6 +3,7 @@ import Paper from "@material-ui/core/Paper";
 import Switch from "@material-ui/core/Switch";
 import Typography from "@material-ui/core/Typography";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import RefreshIcon from "@material-ui/icons/Refresh";
 
 // redux
 import { connect } from "react-redux";
@@ -40,6 +41,7 @@ const WifiSubMenu = ({
     setConfirmDialog,
     setWifiPassword,
   }) => {
+
     useEffect(() => {
       getWifiList();
     }, [getWifiList]);
@@ -178,9 +180,9 @@ const WifiSubMenu = ({
               >
                 Available Networks
               </Typography>
-              {loading && (
+              {/* {loading && (
                 <CircularProgress size={18} style={{ position: "relative" }} />
-              )}
+              )} */}
             </div>
   
             <Paper>
@@ -203,8 +205,18 @@ const WifiSubMenu = ({
                   onClick={getWifiList}
                   style={{textAlign:'center'}}
                   disabled={loading}
+                  
               >
-                  Scan Wi-Fi Network
+                  {loading? 
+                  <div style={{display:'flex', justifyContent:'center', alignItems:'center'}}>
+                   <CircularProgress size={25} style={{position:'relative', left:'3em'}}/>{' '}
+                    Scanning...
+                  </div> : 
+                  <div style={{display:'flex', justifyContent:'center', alignItems:'center'}}>
+                    <RefreshIcon style={{marginRight:'5px'}}/>
+                    Refresh
+                  </div>
+                  }
             </DialogRowButton>
           </>
         )}

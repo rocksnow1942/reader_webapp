@@ -57,6 +57,7 @@ export const wsOnOpen = () => {
   };
   
   export const wsOnClose = (e) => {
+    console.log("wsOnClose", e);
     store.dispatch({ type: SET_WS_OPEN, payload: false });
     store.dispatch({ type: CLEAR_READER_STATUS });
     store.dispatch(createSnackAlert({message:"App lost connection to reader", type:"warning"}))

@@ -28,6 +28,7 @@ const initialState = {
         },        
     },
     recentData: {
+        loading: false,
         items: [],
         hasNext: true,
         hasPrev: false,
@@ -59,7 +60,7 @@ export default function dataReducer(state = initialState, action) {
         case SET_FIRMWARE_VERSION:
             return {...state,firmwareVersion:payload}
         case SET_RECENT_DATA:
-            return {...state,recentData:payload}
+            return {...state,recentData:{...state.recentData,...payload}}
         case SET_WIFI_STATUS:
             return {...state,wifiStatus:{...state.wifiStatus,...payload}}
         case FORGET_WIFI_NETWORK:
