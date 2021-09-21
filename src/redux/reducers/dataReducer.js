@@ -18,9 +18,10 @@ const initialState = {
     firmwareVersion: '',
     readerStatus: {
         wifi: 'ap',
-        bt: 'unknown',
-        pico: 'unknown',
+        bt: 'unknown', 
+        pico: 'unknown', // running
         heater: 'unknown',
+        reader: "Disconnected",
         measurement: {
             remainingTime: 0,
             started: false,

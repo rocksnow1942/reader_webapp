@@ -30,12 +30,29 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: theme.customSpacings.innerWidth,
     margin: "auto",
-    height: theme.customSpacings.innerHeight,
+    height: `calc( ${theme.customSpacings.innerHeight} - 110px)`,
     backgroundColor: theme.palette.background.paper,
     top: theme.customSpacings.innerPosition.top,
     borderRadius: theme.shape.innerBorderRadius,
     overflowY: "scroll",
     padding: "0px",
+  },
+  titleBar: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-around",
+    padding: "0px",
+    backgroundColor:'#FFF',
+    height: "50px",
+
+  },
+  prevNextBtn:{
+    display:'flex',
+    backgroundColor:'#FFF',
+    justifyContent:'space-evenly',      
+    height:'60px',
+    position:'relative', 
+    bottom:'0px'
   },
   title: {
     fontFamily: theme.typography.fontFamily,
@@ -54,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const RecentTab = (props) => {
   const classes = useStyles();
-  const { recent, hasNext, hasPrev, fetchRecent, loading } = props;
+  const { recent, hasNext, hasPrev, fetchRecent, loading } = props;  
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [page, setPage] = React.useState(0);
 
@@ -73,14 +90,13 @@ export const RecentTab = (props) => {
   }
   return (
     <>
-      <List component="ul" className={classes.root}>
-        <ListItem>
+    <div className={classes.titleBar}>
           <Typography className={classes.title}>Recent Tests</Typography>
-          <ListItemIcon style={{ paddingLeft: "5em" }}>
-            {loading && <CircularProgress size={18} />}
+          <ListItemIcon >
+            {true && <CircularProgress size={18} />}
           </ListItemIcon>
-        </ListItem>
-
+        </div>
+      <List component="ul" className={classes.root}>
         <ListItemDivider>
           {recent.map(({ _id, meta, deviceDataId, created, result }, index) => (
             <React.Fragment key={index}>
@@ -110,13 +126,27 @@ export const RecentTab = (props) => {
           ))}
         </ListItemDivider>
 
-        <ListItem style={{justifyContent:'space-evenly', marginTop:'2em'}}>
-        <Button startIcon={<ArrowBackIosIcon />}>Prev</Button>
-
-        <Button endIcon={<ArrowForwardIosIcon />}>NEXT</Button>
-        </ListItem>
+        
 
       </List>
+      <div className={classes.prevNextBtn}>
+        <Button 
+        startIcon={<ArrowBackIosIcon/>}
+        disabled={!hasPrev || loading}
+        onClick={()=>{
+          setPage(page - 1);
+        }}
+        color={hasPrev?"primary":'inherit'}
+        >{hasPrev?"Prev":'prev'}</Button>
+
+        <Button endIcon={<ArrowForwardIosIcon />}
+         disabled={!hasNext || loading}
+         onClick={()=>{
+           setPage(page + 1);
+         }}
+         color={hasNext?"primary":'inherit'}
+        >{hasNext?"Next":'next'}</Button>
+        </div>
 
     </>
   );
