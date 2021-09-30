@@ -21,6 +21,7 @@ import ListItemDivider from "../ListItemDivider";
 import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
+  ...theme.customTheme,
   root: {
     width: theme.customSpacings.innerWidth,
     margin: "auto",
@@ -70,11 +71,17 @@ const MainMenuItem = ({ name, icon, children, setSubMenu }) => {
 
 const MainMenu = ({ currentFirmwareVer, setSubMenu }) => {
   const classes = useStyles();
-  return (
+  return (<>
+
+<div className={classes.tabTitle}>
+      
+          <Typography className={classes.titleText}>Settings</Typography>
+         
+          
+        </div>
     <List component="ul" className={classes.root}>
-      <ListItem>
-        <Typography className={classes.title}>Settings</Typography>
-      </ListItem>
+
+ 
 
       <ListItemDivider>
         {[
@@ -107,6 +114,7 @@ const MainMenu = ({ currentFirmwareVer, setSubMenu }) => {
         ].map((item) => MainMenuItem({ ...item, setSubMenu }))}
       </ListItemDivider>
     </List>
+    </>
   );
 };
 

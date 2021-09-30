@@ -33,6 +33,21 @@ const theme = {
         // innerWidth: 'calc(100% - 20px)',
         innerHeight: '100%',
         innerWidth: '100%',
+    },
+    customTheme:{
+        tabTitle: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "0px",
+            backgroundColor:'#FFF',
+            padding: '8px 16px'
+            // height: "50px",                   
+          },
+          titleText: {                        
+            fontWeight: "bold",            
+            fontSize: "2em",            
+          }
     }
 
 }

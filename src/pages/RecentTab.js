@@ -24,9 +24,12 @@ import IconButton from "@material-ui/core/IconButton";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 
+
+
 dayjs.extend(relativeTime);
 
 const useStyles = makeStyles((theme) => ({
+  ...theme.customTheme,
   root: {
     width: theme.customSpacings.innerWidth,
     margin: "auto",
@@ -37,15 +40,7 @@ const useStyles = makeStyles((theme) => ({
     overflowY: "scroll",
     padding: "0px",
   },
-  titleBar: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-around",
-    padding: "0px",
-    backgroundColor:'#FFF',
-    height: "50px",
 
-  },
   prevNextBtn:{
     display:'flex',
     backgroundColor:'#FFF',
@@ -54,11 +49,7 @@ const useStyles = makeStyles((theme) => ({
     position:'relative', 
     bottom:'0px'
   },
-  title: {
-    fontFamily: theme.typography.fontFamily,
-    fontSize: "1.5em",
-    fontWeight: "bold",
-  },
+
   resultDate: {
     margin: "0 0.8em",
     width: "40%",
@@ -90,11 +81,13 @@ export const RecentTab = (props) => {
   }
   return (
     <>
-    <div className={classes.titleBar}>
-          <Typography className={classes.title}>Recent Tests</Typography>
+    <div className={classes.tabTitle}>
+      {/* <ListItem> */}
+          <Typography className={classes.titleText}>Recent Tests</Typography>
           <ListItemIcon >
             {true && <CircularProgress size={18} />}
           </ListItemIcon>
+          {/* </ListItem> */}
         </div>
       <List component="ul" className={classes.root}>
         <ListItemDivider>
