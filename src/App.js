@@ -1,7 +1,12 @@
 
 import './App.css';
 import {BrowserRouter, Switch, Route} from 'react-router-dom'
-import { createTheme, ThemeProvider as MuiThemeProvider } from '@material-ui/core/styles'
+import {
+  createTheme,
+  ThemeProvider,
+  StyledEngineProvider,
+  // adaptV4Theme,
+} from '@mui/material/styles';
 
 import React, {useEffect} from 'react';
 import { Provider } from 'react-redux'
@@ -43,15 +48,17 @@ function App() {
   
   
   return (
-    <MuiThemeProvider theme={theme}>
-      <Provider store={store}>
-        <BrowserRouter>
-          <Switch>
-            <Route exact path="/" component={Home}/>
-            </Switch>
-        </BrowserRouter>
-      </Provider>
-    </MuiThemeProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <Provider store={store}>
+          <BrowserRouter>
+            <Switch>
+              <Route exact path="/" component={Home}/>
+              </Switch>
+          </BrowserRouter>
+        </Provider>
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 }
 

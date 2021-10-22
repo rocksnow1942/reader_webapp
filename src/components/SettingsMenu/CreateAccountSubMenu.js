@@ -1,9 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import {PasswordInput} from '../MyInputs'
-import TextField from '@material-ui/core/TextField'
-import Typography from '@material-ui/core/Typography'
-import Paper from '@material-ui/core/Paper'
+import TextField from '@mui/material/TextField'
+import Typography from '@mui/material/Typography'
+import Paper from '@mui/material/Paper'
 
 import {DialogRowButton} from '../../components/SlideDialog'
 

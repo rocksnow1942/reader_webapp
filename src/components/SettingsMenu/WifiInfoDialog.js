@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from "react";
-import Divider from "@material-ui/core/Divider";
+import Divider from "@mui/material/Divider";
 import SlideDialog,{SlideDialogTitle, DialogRowButton,DialogKeyValueRow} from "../../components/SlideDialog";
 import { PasswordInput } from "../MyInputs";
 

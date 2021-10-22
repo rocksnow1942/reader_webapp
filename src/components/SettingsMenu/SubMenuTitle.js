@@ -1,8 +1,8 @@
 import React from 'react'
-import { makeStyles } from "@material-ui/styles";
-import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
+import { makeStyles } from "@mui/styles";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 
 
 const useStyles = makeStyles((theme) => ({  

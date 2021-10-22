@@ -27,6 +27,7 @@ export const fetchRecent =
       returnRaw: returnRaw || false,
     }, 3000)
       .then((data) => {
+        console.log(data)
         dispatch({ type: SET_RECENT_DATA, payload: {...data, loading:false} });
       })
       .catch((err) => {

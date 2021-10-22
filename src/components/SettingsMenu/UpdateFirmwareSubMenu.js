@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import Typography from '@material-ui/core/Typography'
-import Paper from '@material-ui/core/Paper'
+import Typography from '@mui/material/Typography'
+import Paper from '@mui/material/Paper'
 
 import {DialogRowButton} from '../../components/SlideDialog'
 

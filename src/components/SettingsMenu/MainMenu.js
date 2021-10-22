@@ -1,18 +1,18 @@
 import React from "react";
-import { makeStyles } from "@material-ui/styles";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import Divider from "@material-ui/core/Divider";
-import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@mui/styles";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
 // icons
-import WifiIcon from "@material-ui/icons/Wifi";
-import DeveloperModeIcon from "@material-ui/icons/DeveloperMode";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import SystemUpdateIcon from "@material-ui/icons/SystemUpdate";
-import RotateLeftIcon from "@material-ui/icons/RotateLeft";
-import InfoIcon from "@material-ui/icons/Info";
+import WifiIcon from "@mui/icons-material/Wifi";
+import DeveloperModeIcon from "@mui/icons-material/DeveloperMode";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import SystemUpdateIcon from "@mui/icons-material/SystemUpdate";
+import RotateLeftIcon from "@mui/icons-material/RotateLeft";
+import InfoIcon from "@mui/icons-material/Info";
 
 // components
 import ListItemDivider from "../ListItemDivider";

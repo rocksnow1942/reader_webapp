@@ -21,7 +21,8 @@ const theme = {
     shape:{
         // innerBorderRadius: '10px 10px 10px 10px',
         innerBorderRadius: '5px 5px 0px 0px',
-        containerBorderRadius: '5px'
+        containerBorderRadius: '5px',
+        borderRadius: 5,
     },
     spacing: 8,
     customSpacings: {

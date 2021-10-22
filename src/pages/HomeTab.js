@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
+import makeStyles from '@mui/styles/makeStyles';
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 import clsx from "clsx";
 import ws from '../util/connection'
+import Box from "@mui/material/Box";
+import { styled } from "@mui/system";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
   readerId: {
     backgroundColor: "green",
     padding: "15px 25px",
+    margin:'0px 10px',
     borderRadius: "1em",
     color: "white",
     fontWeight: "bold",
@@ -97,6 +100,28 @@ function Timer({time}) {
   );
 }
 
+
+const ReaderID = styled(Typography, {shouldForwardProp: prop=>prop!=="wsOpen"})(({theme,wsOpen})=>({
+  padding: '15px 25px',
+  margin:'0px 10px'        ,
+  borderRadius: '1em',
+  color: 'white',
+  fontWeight: 'bold',
+  backgroundColor: '#FFA500',
+  transition: theme.transitions.create('background-color', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  ...(wsOpen && {
+    backgroundColor: 'green',
+    transition: theme.transitions.create('background-color', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    })
+  })
+  
+}));
+
 export const HomeTab = (props) => {
   const { wsOpen , systemID , readerStatus, measurement } = props;
   const classes = useStyles();
@@ -109,9 +134,10 @@ export const HomeTab = (props) => {
       <Typography variant="subtitle2" className={classes.preReaderId}>
         Reader ID
       </Typography>
-      <Typography variant="h3" className={wsOpen? classes.readerId : clsx(classes.readerId,classes.disconnected)}>
+      <ReaderID wsOpen={wsOpen} variant='h3'>
         {systemID}
-      </Typography>
+      </ReaderID>
+
       <Typography variant="subtitle2" className={classes.preStatus}>
         Reader Status
       </Typography>

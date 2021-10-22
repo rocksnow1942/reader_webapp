@@ -1,23 +1,23 @@
 import React from "react";
 
 // Icons
-import SignalWifi0BarIcon from "@material-ui/icons/SignalWifi0Bar";
-import SignalWifi1BarIcon from "@material-ui/icons/SignalWifi1Bar";
-import SignalWifi2BarIcon from "@material-ui/icons/SignalWifi2Bar";
-import SignalWifi3BarIcon from "@material-ui/icons/SignalWifi3Bar";
-import SignalWifi4BarIcon from "@material-ui/icons/SignalWifi4Bar";
+import SignalWifi0BarIcon from "@mui/icons-material/SignalWifi0Bar";
+import SignalWifi1BarIcon from "@mui/icons-material/SignalWifi1Bar";
+import SignalWifi2BarIcon from "@mui/icons-material/SignalWifi2Bar";
+import SignalWifi3BarIcon from "@mui/icons-material/SignalWifi3Bar";
+import SignalWifi4BarIcon from "@mui/icons-material/SignalWifi4Bar";
 
-import SignalWifi1BarLockIcon from "@material-ui/icons/SignalWifi1BarLock";
-import SignalWifi2BarLockIcon from "@material-ui/icons/SignalWifi2BarLock";
-import SignalWifi3BarLockIcon from "@material-ui/icons/SignalWifi3BarLock";
-import SignalWifi4BarLockIcon from "@material-ui/icons/SignalWifi4BarLock";
-import CheckIcon from "@material-ui/icons/Check";
-import InfoOutlinedIcon from "@material-ui/icons/InfoOutlined";
-import SignalWifiOffIcon from "@material-ui/icons/SignalWifiOff";
+import SignalWifi1BarLockIcon from "@mui/icons-material/SignalWifi1BarLock";
+import SignalWifi2BarLockIcon from "@mui/icons-material/SignalWifi2BarLock";
+import SignalWifi3BarLockIcon from "@mui/icons-material/SignalWifi3BarLock";
+import SignalWifi4BarLockIcon from "@mui/icons-material/SignalWifi4BarLock";
+import CheckIcon from "@mui/icons-material/Check";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import SignalWifiOffIcon from "@mui/icons-material/SignalWifiOff";
 
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemIcon from "@mui/material/ListItemIcon";
 
 
 

@@ -1,8 +1,8 @@
 import React from "react";
-import Divider from "@material-ui/core/Divider";
+import Divider from "@mui/material/Divider";
 import SlideDialog,{SlideDialogTitle, DialogRowButton } from "../../components/SlideDialog";
 import { PasswordInput } from "../MyInputs";
-import Typography from "@material-ui/core/Typography";
+import Typography from "@mui/material/Typography";
 
 /**
  * Open a dialog to enter wifi password.
