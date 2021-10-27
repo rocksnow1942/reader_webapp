@@ -16,8 +16,14 @@ const theme = {
             default: '#fff',
             paper: '#fff',
             outerSpace: '#eee', // rgb(15,29,56)
-        },        
+        },   
+        text:{
+            primary: '#444',
+            secondary: '#888',
+            myText:'#F0F'
+        },     
     },
+   
     shape:{
         // innerBorderRadius: '10px 10px 10px 10px',
         innerBorderRadius: '5px 5px 0px 0px',

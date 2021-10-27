@@ -2,12 +2,17 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import makeStyles from '@mui/styles/makeStyles';
 import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
+import Typography , {typographyClasses} from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import clsx from "clsx";
 import ws from '../util/connection'
 import Box from "@mui/material/Box";
 import { styled } from "@mui/system";
+import {pink,blue} from '@mui/material/colors'
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+
+console.log(typographyClasses)
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -134,6 +139,11 @@ export const HomeTab = (props) => {
       <Typography variant="subtitle2" className={classes.preReaderId}>
         Reader ID
       </Typography>
+
+      <Typography variant="button" classes={{button:'mybutton-red'}}>
+        Reader ID
+      </Typography>
+
       <ReaderID wsOpen={wsOpen} variant='h3'>
         {systemID}
       </ReaderID>
